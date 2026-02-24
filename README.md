@@ -1,69 +1,77 @@
 # 🧪 CellSplit | Host Cell Lab Suite
 > **Precision cell passaging. Zero friction.**
 
-CellSplit es una herramienta minimalista diseñada para optimizar el flujo de trabajo en el laboratorio de cultivo celular. Permite transitar del conteo en cámara de Neubauer al cálculo del volumen de inóculo en una sola interfaz, eliminando errores de transcripción y cálculos manuales.
-
-[ ![Live App](https://img.shields.io/badge/Status-Live_App-d4ff00?style=for-the-badge&logo=githubpages&logoColor=000) ](https://ebalderasr.github.io/CellSplit/)
-
----
+CellSplit is a minimalist, professional-grade tool designed to streamline mammalian cell culture maintenance. It bridges the gap between Neubauer chamber counting and inoculum calculation in a single, high-contrast interface.
 
 <p align="center">
-  <img src="icon-512.png" width="200" alt="CellSplit Logo">
+  <img src="icon-512.png" width="180" alt="CellSplit Logo">
+</p>
+
+<p align="center">
+  <a href="https://ebalderasr.github.io/CellSplit/">
+    <img src="https://img.shields.io/badge/🚀_LAUNCH_LIVE_APP-CLICK_HERE_TO_START-d4ff00?style=for-the-badge&labelColor=000000" alt="Launch CellSplit App">
+  </a>
 </p>
 
 ---
 
-## 🧬 Fundamentos del Cálculo
+## 🧬 Scientific Fundamentals
 
-CellSplit automatiza los cálculos críticos para el mantenimiento de líneas celulares (como células CHO). Las fórmulas implementadas son:
+CellSplit automates the critical calculations required for bioprocess scaling and cell line maintenance (optimized for CHO cells).
 
-### 1. Concentración Celular
-Se calcula la densidad de células viables por mililitro basándose en el conteo total y los parámetros de dilución:
+### 1. Viable Cell Concentration
+The app calculates the density of viable cells per milliliter based on your count and dilution factor:
 
-$$\text{cell/mL} = \left( \frac{\text{Células Contadas}}{\text{Cuadrantes}} \right) \times \text{Factor de Dilución} \times 10,000$$
+$$\text{cell/mL} = \left( \frac{\text{Live Cells counted}}{\text{Squares counted}} \right) \times \text{Dilution Factor} \times 10,000$$
 
-### 2. Viabilidad
-Determina el porcentaje de salud del cultivo mediante exclusión con colorante (ej. Azul de Tripano):
+### 2. Viability (%)
+Determines the health of the culture using dye exclusion (e.g., Trypan Blue):
 
-$$\text{Viabilidad (\%)} = \left( \frac{\text{Células Vivas}}{\text{Células Vivas} + \text{Células Muertas}} \right) \times 100$$
+$$\text{Viability (\%)} = \left( \frac{\text{Live Cells}}{\text{Live Cells} + \text{Dead Cells}} \right) \times 100$$
 
-### 3. Volumen de Inóculo (Pase)
-Utiliza el principio de conservación de masa ($C_1 V_1 = C_2 V_2$) para determinar cuánto volumen del cultivo actual se requiere para alcanzar la densidad de siembra meta:
+### 3. Inoculum Volume (Passaging)
+Applies the conservation of mass principle ($C_1 V_1 = C_2 V_2$) to determine the exact volume needed for a new flask:
 
 $$V_1 = \frac{C_2 \times V_2}{C_1}$$
 
-*Donde:*
-* $C_1$: Concentración celular actual.
-* $V_1$: Volumen de inóculo requerido.
-* $C_2$: Densidad de siembra meta.
-* $V_2$: Volumen final del nuevo matraz.
+---
+
+## 🔍 Equipment Specifications
+
+
+CellSplit's algorithms assume the use of a standard **Neubauer counting chamber** (or hemocytometer) with the following precision dimensions:
+
+* **Chamber Depth:** $0.1$ mm.
+* **Smallest Square Area:** $0.0025 \text{ mm}^2$ ($0.05$ mm side length).
+* **Conversion Factor:** The $10,000$ ($10^4$) factor is derived from the volume of one large square ($1 \text{ mm}^2 \text{ area} \times 0.1 \text{ mm} \text{ depth} = 0.1 \text{ mm}^3$), which is equivalent to $10^{-4} \text{ mL}$.
 
 ---
 
-## 🔍 Especificaciones del Equipo
-Los algoritmos de CellSplit asumen el uso de una **Cámara de Neubauer estándar** (o hemocitómetro) con las dimensiones especificadas por [Marienfeld Superior](https://www.marienfeld-superior.com/counting-grids.html):
-
-* **Profundidad (Depth):** 0.1 mm.
-* **Área del cuadro pequeño:** 0.0025 mm² (lado de 0.05 mm).
-* **Factor de conversión:** El factor $10,000$ ($10^4$) se deriva del volumen de un cuadrante grande ($1 \text{ mm}^2 \times 0.1 \text{ mm} = 0.1 \text{ mm}^3$), convirtiendo $\text{mm}^3$ a $\text{mL}$.
-
----
-
-## ⚡ Características
-- **Data Link:** Los resultados del conteo se transfieren automáticamente al módulo de pase.
-- **Diagnostics:** Alertas visuales si el conteo está fuera del rango estadístico óptimo (100-500 células en 10 cuadrantes).
-- **PWA Ready:** Instalable en Android e iOS para uso offline dentro de la campana de bioseguridad.
-- **Multilingüe:** Interfaz bilingüe (ES/EN) con terminología técnica corregida.
-
-## 🚀 Instalación
-Al ser una **Progressive Web App (PWA)**, no necesitas descargar nada de la Play Store:
-1. Accede a [CellSplit](https://ebalderasr.github.io/CellSplit/).
-2. Haz clic en el botón **[ Install App ]** o selecciona "Agregar a inicio" en tu navegador.
+## ⚡ Features
+* **Automated Data Link:** Results from the counting module are automatically transferred to the passaging module.
+* **Range Diagnostics:** Visual alerts if your count is outside the optimal statistical range (100–500 cells in 10 squares).
+* **PWA Ready:** Install it on Android or iOS for offline use inside the biosafety cabinet.
+* **Dark Mode UX:** Designed for high visibility in low-light microscope rooms.
 
 ---
 
-## 🧬 Part of Host Cell
-**Host Cell** es una suite de herramientas sencillas para biotecnología, enfocadas en la eficiencia del laboratorio con una estética brutalista y técnica.
+## ❓ FAQ (Frequently Asked Questions)
 
-Desarrollado por [Emiliano Balderas](https://github.com/ebalderasr).
+**Q: Why does the app use the $10,000$ factor?**
+A: Since one large square on a Neubauer chamber represents a volume of $0.1 \text{ mm}^3$, multiplying by $10,000$ converts the average count per square into cells per $1 \text{ mL}$ ($1,000 \text{ mm}^3$).
+
+**Q: Can I use this for non-CHO cells?**
+A: Yes. While developed for CHO cell bioprocessing, the math is universal for any mammalian cell line counted via hemocytometer.
+
+**Q: Does it work without internet?**
+A: Yes. Once installed as a PWA, the Service Worker caches the logic for offline lab use.
+
+---
+
+## 👨‍🔬 Author
+**Emiliano Balderas**
+Biotechnology Engineer | PhD Student in Biochemistry
 *Instituto de Biotecnología (IBt) - UNAM.*
+
+---
+**Host Cell Lab Suite** – *Brutalist tools for high-performance biotechnology.*
