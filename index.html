@@ -1,20 +1,24 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CellSplit | Host Cell</title>
+    
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="CellSplit">
     <link rel="apple-touch-icon" href="icon-192.png">
+    
     <link rel="manifest" href="manifest.json">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CellSplit | Host Cell</title>
+
     <style>
+        /* --- VARIABLES DE DISEÑO (Brutalist Suite) --- */
         :root {
             --bg-main: #0a0a0a;
             --bg-card: #171717;
             --bg-input: #262626;
-            --accent: #d4ff00; 
+            --accent: #d4ff00; /* Verde neón Host Cell */
             --accent-glow: rgba(212, 255, 0, 0.2);
             --text-pri: #f5f5f5;
             --text-sec: #a3a3a3;
@@ -24,6 +28,7 @@
             --danger: #ef5350;
         }
 
+        /* --- ESTILOS GENERALES --- */
         body {
             font-family: 'Courier New', Courier, monospace;
             background-color: var(--bg-main);
@@ -34,7 +39,7 @@
             touch-action: manipulation;
         }
 
-        /* Fix para que mL no parezca ML */
+        /* Tipografía especial para unidades (evita confusión mL con ML) */
         .u { 
             font-family: Arial, Helvetica, sans-serif; 
             text-transform: none !important;
@@ -42,6 +47,7 @@
             font-weight: normal;
         }
 
+        /* --- HEADER Y CONTROLES --- */
         .header-container {
             display: flex;
             justify-content: space-between;
@@ -73,15 +79,17 @@
         .controls {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
             align-items: flex-end;
         }
 
+        /* --- BOTONES Y SELECTORES --- */
         .lang-switch {
             font-size: 0.9rem;
             font-weight: bold;
             color: var(--text-sec);
             cursor: pointer;
+            margin-bottom: 5px;
         }
         .lang-switch span { padding: 0 5px; transition: color 0.2s; }
         .lang-switch span.active { color: var(--accent); }
@@ -97,9 +105,28 @@
             text-transform: uppercase;
             transition: all 0.2s;
             font-family: inherit;
+            width: fit-content;
         }
-        .btn-clear:hover { background-color: var(--danger); color: #fff; border-color: var(--danger); }
+        .btn-clear:hover { 
+            background-color: var(--danger); 
+            color: #fff; 
+            border-color: var(--danger); 
+        }
 
+        /* Estilo específico para el botón de instalación (con pulso) */
+        #install-btn {
+            border-color: var(--accent);
+            color: var(--accent);
+            animation: pulse-green 2s infinite;
+        }
+
+        @keyframes pulse-green {
+            0% { box-shadow: 0 0 0 0 rgba(212, 255, 0, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(212, 255, 0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(212, 255, 0, 0); }
+        }
+
+        /* --- GRID DE APLICACIÓN --- */
         .app-grid {
             display: grid;
             grid-template-columns: 1fr; 
@@ -107,8 +134,11 @@
             max-width: 1000px;
             margin: 0 auto;
         }
-        @media (min-width: 768px) { .app-grid { grid-template-columns: 1fr 1fr; } }
+        @media (min-width: 768px) { 
+            .app-grid { grid-template-columns: 1fr 1fr; } 
+        }
 
+        /* --- TARJETAS (MÓDULOS) --- */
         .card {
             background-color: var(--bg-card);
             padding: 25px;
@@ -155,6 +185,7 @@
             box-shadow: 0 0 0 2px var(--accent-glow);
         }
 
+        /* Animación para el dato transferido automáticamente */
         .auto-filled { animation: highlightUpdate 1.5s ease-out; }
         @keyframes highlightUpdate {
             0% { background-color: var(--accent); color: #000; }
@@ -179,6 +210,7 @@
         }
         .btn-action:hover { background-color: var(--accent); color: #000; }
 
+        /* --- SECCIÓN DE RESULTADOS --- */
         .results-box {
             margin-top: 20px;
             padding: 15px;
@@ -204,21 +236,6 @@
             border-bottom: 1px dashed var(--border-color);
             margin-bottom: 15px;
         }
-        /* Animación y transición para el botón de instalación */
-        #install-btn {
-            transition: opacity 0.5s ease, transform 0.2s ease;
-            animation: pulse-green 2s infinite;
-        }
-
-        #install-btn:hover {
-            transform: scale(1.05);
-        }
-
-        @keyframes pulse-green {
-            0% { box-shadow: 0 0 0 0 rgba(212, 255, 0, 0.4); }
-            70% { box-shadow: 0 0 0 10px rgba(212, 255, 0, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(212, 255, 0, 0); }
-        }
     </style>
 </head>
 <body>
@@ -228,18 +245,24 @@
             <h1 class="header-title">CellSplit</h1>
             <div class="header-subtitle" data-i18n="subtitle">HOST CELL LAB TOOLS</div>
         </div>
+        
         <div class="controls">
             <div class="lang-switch">
                 <span id="lang-es" class="active" onclick="setLanguage('es')">ES</span> | 
                 <span id="lang-en" onclick="setLanguage('en')">EN</span>
             </div>
+            
             <button class="btn-clear" onclick="limpiarDatos()" data-i18n="btnClear">[ Limpiar ]</button>
-            <button id="install-btn" class="btn-clear" style="display:none; ..." data-i18n="btnInstall">[ Install App ]</button>
-            <a href="https://github.com/ebalderasr/CellSplit" target="_blank" style="text-decoration: none;">
-            <button class="btn-clear" style="border-color: var(--text-sec); color: var(--text-sec);" data-i18n="btnDocs">
-            [ Docs / Repo ]
+            
+            <button id="install-btn" class="btn-clear" style="display:none;" data-i18n="btnInstall">
+                [ Instalar App ]
             </button>
-    </a>
+            
+            <a href="https://github.com/ebalderasr/CellSplit" target="_blank" style="text-decoration: none;">
+                <button class="btn-clear" style="border-color: var(--text-sec); color: var(--text-sec);" data-i18n="btnDocs">
+                    [ Documentación ]
+                </button>
+            </a>
         </div>
     </div>
 
@@ -344,9 +367,14 @@
     </div>
 
     <script>
+        // --- DICCIONARIO DE IDIOMAS (i18n) ---
         const i18n = {
             es: {
-                subtitle: "HOST CELL LAB TOOLS", btnClear: "[ Limpiar ]", card1Title: "01. Conteo de células",
+                subtitle: "HOST CELL LAB TOOLS", 
+                btnClear: "[ Limpiar ]", 
+                btnInstall: "[ Instalar App ]",
+                btnDocs: "[ Documentación ]",
+                card1Title: "01. Conteo de células",
                 lblLive: "Vivas", lblDead: "Muertas", lblSquares: "Cuadrantes", lblDilution: "Dilución",
                 btnCalc1: "Analizar Conteo", 
                 resViableConc: 'Concentración de celulas viables (x10⁶ <span class="u">cell/mL</span>)',
@@ -356,16 +384,18 @@
                 lblTargetV: 'Volumen Meta (<span class="u">mL</span>)',
                 lblTargetC: "Densidad Meta (x10⁶)", optOther: "Otro", optOther2: "Otra",
                 btnCalc2: "Calcular Volumen", resInoculum: "Tomar Volumen de Inóculo",
-                resMedia: "Añadir Medio Fresco", alertCells: "Ingresa al menos 1 célula.",
+                resMedia: "Volumen de Medio Fresco", alertCells: "Ingresa al menos 1 célula.",
                 alertC1: "Ingresa una Concentración Actual válida.",
                 alertTargets: "Verifica los valores meta.",
                 alertLogic: "Error: La densidad meta debe ser menor a la actual.",
-                statLow: "⚠️ Conteo bajo", statHigh: "⚠️ Conteo alto", statOpt: "✔️ Rango óptimo",
-                btnInstall: "[ Instalar App ]",
-                btnDocs: "[ Documentación ]"
+                statLow: "⚠️ Conteo bajo", statHigh: "⚠️ Conteo alto", statOpt: "✔️ Rango óptimo"
             },
             en: {
-                subtitle: "HOST CELL LAB TOOLS", btnClear: "[ Clear All ]", card1Title: "01. Viable Count",
+                subtitle: "HOST CELL LAB TOOLS", 
+                btnClear: "[ Clear All ]", 
+                btnInstall: "[ Install App ]",
+                btnDocs: "[ Docs / Repo ]",
+                card1Title: "01. Viable Count",
                 lblLive: "Live", lblDead: "Dead", lblSquares: "Squares", lblDilution: "Dilution",
                 btnCalc1: "Analyze Count", 
                 resViableConc: 'Viable Concentration (x10⁶ <span class="u">cell/mL</span>)',
@@ -379,14 +409,13 @@
                 alertC1: "Enter a valid Current Concentration.",
                 alertTargets: "Check target values.",
                 alertLogic: "Error: Target density must be lower than current.",
-                statLow: "⚠️ Low count", statHigh: "⚠️ High count", statOpt: "✔️ Optimal range",
-                btnInstall: "[ Install App ]",
-                btnDocs: "[ Docs / Repo ]",
+                statLow: "⚠️ Low count", statHigh: "⚠️ High count", statOpt: "✔️ Optimal range"
             }
         };
 
         let currentLang = 'es';
 
+        // Cambiar idioma de la interfaz
         function setLanguage(lang) {
             currentLang = lang;
             document.getElementById('lang-es').classList.toggle('active', lang === 'es');
@@ -397,15 +426,19 @@
                 if(i18n[lang][key]) el.innerHTML = i18n[lang][key];
             });
             document.getElementById('inpC1').placeholder = lang === 'es' ? "Auto-transferencia..." : "Auto-transferred...";
+            
+            // Refrescar resultados si ya hay un cálculo hecho
             if(document.getElementById('boxResConteo').style.display === 'block') ejecutarConteo();
         }
 
+        // Mostrar/Ocultar campos personalizados (Otro...)
         function toggleCustom(selectId, inputId) {
             const select = document.getElementById(selectId);
             const input = document.getElementById(inputId);
             input.style.display = select.value === 'custom' ? 'block' : 'none';
         }
 
+        // Resetear todos los campos
         function limpiarDatos() {
             ['inpVivas', 'inpMuertas', 'inpC1', 'custV2', 'custC2'].forEach(id => document.getElementById(id).value = '');
             document.getElementById('inpDilucion').value = '2';
@@ -419,6 +452,7 @@
             document.getElementById('inpC1').classList.remove('auto-filled');
         }
 
+        // --- LÓGICA MÓDULO 01: CONTEO ---
         function ejecutarConteo() {
             let vivas = parseInt(document.getElementById('inpVivas').value) || 0;
             let muertas = parseInt(document.getElementById('inpMuertas').value) || 0;
@@ -430,6 +464,7 @@
                 alert(i18n[currentLang].alertCells); return;
             } else if (totales <= 0) return;
 
+            // Fórmulas
             let viabilidad = (vivas / totales) * 100;
             let concMillones = (vivas / cuadrantes) * dilucion * 10000 / 1000000;
 
@@ -437,6 +472,7 @@
             document.getElementById('outViab').innerText = viabilidad.toFixed(1);
             document.getElementById('outTotal').innerText = totales;
 
+            // Diagnóstico estadístico
             let statusBadge = document.getElementById('outStatus');
             let minC = cuadrantes === 10 ? 100 : 50;
             let maxC = cuadrantes === 10 ? 500 : 250;
@@ -452,13 +488,16 @@
                 statusBadge.style.backgroundColor = "#4caf50"; statusBadge.style.color = "#fff";
             }
             document.getElementById('boxResConteo').style.display = 'block';
+
+            // Transferencia de datos automática al Módulo 02
             let inputC1 = document.getElementById('inpC1');
             inputC1.value = concMillones.toFixed(2);
             inputC1.classList.remove('auto-filled');
-            void inputC1.offsetWidth; 
+            void inputC1.offsetWidth; // Trigger reflow
             inputC1.classList.add('auto-filled');
         }
 
+        // --- LÓGICA MÓDULO 02: INÓCULO (PASE) ---
         function ejecutarInoculo() {
             let c1 = parseFloat(document.getElementById('inpC1').value);
             let selV2 = document.getElementById('selV2').value;
@@ -470,63 +509,60 @@
             if (!v2 || !c2) { alert(i18n[currentLang].alertTargets); return; }
             if (c2 >= c1) { alert(i18n[currentLang].alertLogic); return; }
 
+            // Fórmula C1V1 = C2V2
             let v1 = (c2 * v2) / c1;
             let medio = v2 - v1;
+            
             document.getElementById('outV1').innerText = v1.toFixed(3);
             document.getElementById('outMedio').innerText = medio.toFixed(2);
             document.getElementById('boxResInoculo').style.display = 'block';
         }
 
-        // Init language
-        setLanguage('es');
-        // --- LÓGICA DE INSTALACIÓN PWA MEJORADA ---
-let deferredPrompt;
-const installBtn = document.getElementById('install-btn');
+        // --- LÓGICA PWA E INSTALACIÓN ---
+        let deferredPrompt;
+        const installBtn = document.getElementById('install-btn');
 
-// 1. Capturar el evento en Android/Chrome
-window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
-    // Solo mostramos el botón si no está ya instalada
-    if (!window.matchMedia('(display-mode: standalone)').matches) {
-        installBtn.style.display = 'block';
-    }
-});
+        // Capturar evento de instalación
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            // Mostrar botón si no está en modo standalone
+            if (!window.matchMedia('(display-mode: standalone)').matches) {
+                installBtn.style.display = 'block';
+            }
+        });
 
-// 2. Ejecutar la instalación al dar clic
-installBtn.addEventListener('click', async () => {
-    if (deferredPrompt) {
-        deferredPrompt.prompt();
-        const { outcome } = await deferredPrompt.userChoice;
-        if (outcome === 'accepted') {
+        installBtn.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') installBtn.style.display = 'none';
+                deferredPrompt = null;
+            } else {
+                const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+                if (isIOS) {
+                    alert(currentLang === 'es' 
+                        ? "iOS: Toca 'Compartir' ↑ y luego 'Agregar a inicio' ⊕." 
+                        : "iOS: Tap 'Share' ↑ and then 'Add to Home Screen' ⊕.");
+                }
+            }
+        });
+
+        window.addEventListener('appinstalled', () => {
             installBtn.style.display = 'none';
-        }
-        deferredPrompt = null;
-    } else {
-        // Fallback manual para iOS o si el prompt no está disponible
-        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-        if (isIOS) {
-            alert(currentLang === 'es' 
-                ? "En iOS: Toca el botón 'Compartir' ↑ y selecciona 'Agregar a inicio' ⊕." 
-                : "On iOS: Tap the 'Share' button ↑ and select 'Add to Home Screen' ⊕.");
-        }
-    }
-});
+        });
 
-// 3. Ocultar el botón una vez instalada con éxito
-window.addEventListener('appinstalled', () => {
-    installBtn.style.display = 'none';
-    console.log('CellSplit instalada correctamente');
-});
+        // Registro de Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('SW activo'))
+                    .catch(err => console.error('Error SW', err));
+            });
+        }
 
-// --- EL REGISTRO QUE YA TENÍAS (MANTENIDO) ---
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js')
-            .then(reg => console.log('SW registrado con éxito'))
-            .catch(err => console.error('Error al registrar SW:', err));
-    });
-}
+        // Iniciar en español por defecto
+        setLanguage('es');
     </script>
 </body>
 </html>
