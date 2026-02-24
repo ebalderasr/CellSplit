@@ -9,16 +9,15 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="CellSplit">
     <link rel="apple-touch-icon" href="icon-192.png">
-    
     <link rel="manifest" href="manifest.json">
 
     <style>
-        /* --- VARIABLES DE DISEÑO (Brutalist Suite) --- */
+        /* --- VARIABLES DE DISEÑO --- */
         :root {
             --bg-main: #0a0a0a;
             --bg-card: #171717;
             --bg-input: #262626;
-            --accent: #d4ff00; /* Verde neón Host Cell */
+            --accent: #d4ff00; /* Verde Host Cell */
             --accent-glow: rgba(212, 255, 0, 0.2);
             --text-pri: #f5f5f5;
             --text-sec: #a3a3a3;
@@ -36,84 +35,61 @@
             margin: 0;
             padding: 20px;
             box-sizing: border-box;
-            touch-action: manipulation;
+            line-height: 1.4;
         }
 
-        /* Tipografía especial para unidades (evita confusión mL con ML) */
-        .u { 
-            font-family: Arial, Helvetica, sans-serif; 
-            text-transform: none !important;
-            letter-spacing: 0;
-            font-weight: normal;
-        }
+        /* Clase para evitar confusión entre mL y ML */
+        .u { font-family: Arial, sans-serif; text-transform: none !important; }
 
-        /* --- HEADER Y CONTROLES --- */
+        /* --- ENCABEZADO --- */
         .header-container {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
             margin-bottom: 25px;
             max-width: 1000px;
-            margin-left: auto;
-            margin-right: auto;
+            margin: 0 auto 25px auto;
             border-bottom: 2px solid var(--border-color);
             padding-bottom: 15px;
         }
 
-        .header-title {
-            color: var(--accent);
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            font-size: 1.8rem;
-            font-weight: bold;
-            margin: 0;
-        }
+        .header-title { color: var(--accent); text-transform: uppercase; font-size: 1.8rem; margin: 0; }
+        .header-subtitle { font-size: 0.8rem; color: var(--text-sec); margin-top: 5px; }
 
-        .header-subtitle {
-            font-size: 0.8rem;
-            color: var(--text-sec);
-            letter-spacing: 1px;
-            margin-top: 5px;
-        }
-
-        .controls {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            align-items: flex-end;
-        }
-
-        /* --- BOTONES Y SELECTORES --- */
-        .lang-switch {
-            font-size: 0.9rem;
-            font-weight: bold;
-            color: var(--text-sec);
-            cursor: pointer;
-            margin-bottom: 5px;
-        }
-        .lang-switch span { padding: 0 5px; transition: color 0.2s; }
+        .controls { display: flex; flex-direction: column; gap: 10px; align-items: flex-end; }
+        
+        .lang-switch { font-weight: bold; color: var(--text-sec); cursor: pointer; }
         .lang-switch span.active { color: var(--accent); }
 
+        /* Botones de control estándar */
         .btn-clear {
-            background-color: transparent;
+            background: transparent;
             color: var(--text-sec);
             border: 1px solid var(--text-sec);
             padding: 6px 12px;
             font-size: 0.8rem;
-            border-radius: 4px;
             cursor: pointer;
             text-transform: uppercase;
-            transition: all 0.2s;
             font-family: inherit;
-            width: fit-content;
         }
-        .btn-clear:hover { 
-            background-color: var(--danger); 
-            color: #fff; 
-            border-color: var(--danger); 
-        }
+        .btn-clear:hover { background: var(--danger); color: white; border-color: var(--danger); }
 
-        /* Estilo específico para el botón de instalación (con pulso) */
+        /* Botón de Documentación (Resaltado) */
+        .btn-docs {
+            background: var(--bg-input);
+            color: var(--accent);
+            border: 1px solid var(--accent);
+            padding: 8px 14px;
+            font-size: 0.85rem;
+            text-decoration: none;
+            text-transform: uppercase;
+            font-weight: bold;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+        .btn-docs:hover { background: var(--accent); color: #000; }
+
+        /* Botón de instalación con pulso */
         #install-btn {
             border-color: var(--accent);
             color: var(--accent);
@@ -122,120 +98,56 @@
 
         @keyframes pulse-green {
             0% { box-shadow: 0 0 0 0 rgba(212, 255, 0, 0.4); }
-            70% { box-shadow: 0 0 0 10px rgba(212, 255, 0, 0); }
+            70% { box-shadow: 0 0 0 8px rgba(212, 255, 0, 0); }
             100% { box-shadow: 0 0 0 0 rgba(212, 255, 0, 0); }
         }
 
-        /* --- GRID DE APLICACIÓN --- */
+        /* --- GRID Y TARJETAS --- */
         .app-grid {
             display: grid;
-            grid-template-columns: 1fr; 
+            grid-template-columns: 1fr;
             gap: 25px;
             max-width: 1000px;
             margin: 0 auto;
         }
-        @media (min-width: 768px) { 
-            .app-grid { grid-template-columns: 1fr 1fr; } 
-        }
+        @media (min-width: 768px) { .app-grid { grid-template-columns: 1fr 1fr; } }
 
-        /* --- TARJETAS (MÓDULOS) --- */
-        .card {
-            background-color: var(--bg-card);
-            padding: 25px;
-            border: 1px solid var(--border-color);
-            display: flex;
-            flex-direction: column;
-        }
-
-        .card-title {
-            margin-top: 0;
-            margin-bottom: 20px;
-            font-size: 1.1rem;
-            color: var(--text-pri);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
+        .card { background: var(--bg-card); padding: 25px; border: 1px solid var(--border-color); display: flex; flex-direction: column; }
+        .card-title { margin-top: 0; margin-bottom: 20px; font-size: 1.1rem; text-transform: uppercase; }
 
         .input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .input-group { margin-bottom: 18px; }
-        
-        label {
-            display: block;
-            font-size: 0.8rem;
-            color: var(--text-sec);
-            text-transform: uppercase;
-            margin-bottom: 6px;
-            font-weight: bold;
-        }
+        label { display: block; font-size: 0.8rem; color: var(--text-sec); text-transform: uppercase; margin-bottom: 6px; font-weight: bold; }
         
         input, select {
-            width: 100%;
-            padding: 12px;
-            background-color: var(--bg-input);
-            border: 1px solid var(--border-color);
-            color: var(--text-pri);
-            font-family: inherit;
-            font-size: 1.1rem;
-            box-sizing: border-box;
+            width: 100%; padding: 12px; background: var(--bg-input);
+            border: 1px solid var(--border-color); color: var(--text-pri);
+            font-family: inherit; font-size: 1.1rem; box-sizing: border-box;
         }
         
-        input:focus, select:focus { 
-            outline: none; 
-            border-color: var(--accent);
-            box-shadow: 0 0 0 2px var(--accent-glow);
-        }
-
-        /* Animación para el dato transferido automáticamente */
-        .auto-filled { animation: highlightUpdate 1.5s ease-out; }
-        @keyframes highlightUpdate {
-            0% { background-color: var(--accent); color: #000; }
-            100% { background-color: var(--bg-input); color: var(--text-pri); }
-        }
-
-        .custom-input { margin-top: 10px; display: none; }
+        input:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 5px var(--accent-glow); }
 
         .btn-action {
-            width: 100%;
-            padding: 15px;
-            background-color: var(--bg-input);
-            color: var(--accent);
-            border: 1px solid var(--accent);
-            font-family: inherit;
-            font-size: 1.1rem;
-            font-weight: bold;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: all 0.2s;
+            width: 100%; padding: 15px; background: var(--bg-input);
+            color: var(--accent); border: 1px solid var(--accent);
+            font-weight: bold; text-transform: uppercase; cursor: pointer;
+            transition: 0.2s;
             margin-top: auto;
         }
-        .btn-action:hover { background-color: var(--accent); color: #000; }
+        .btn-action:hover { background: var(--accent); color: #000; }
 
-        /* --- SECCIÓN DE RESULTADOS --- */
-        .results-box {
-            margin-top: 20px;
-            padding: 15px;
-            border: 1px dashed var(--accent);
-            background-color: var(--accent-glow);
-            display: none;
-        }
-
-        .res-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+        /* --- RESULTADOS --- */
+        .results-box { margin-top: 20px; padding: 15px; border: 1px dashed var(--accent); background: var(--accent-glow); display: none; }
         .res-label { font-size: 0.8rem; color: var(--text-sec); text-transform: uppercase; }
-        .res-val { font-size: 1.8rem; font-weight: bold; color: var(--accent); word-break: break-all;}
-        .res-val-small { font-size: 1.2rem; font-weight: bold; color: var(--text-pri); }
-        
-        .status-badge {
-            display: inline-block; padding: 6px 10px; font-size: 0.8rem;
-            margin-top: 10px; font-weight: bold; font-family: sans-serif;
-            color: #000;
-        }
+        .res-val { font-size: 1.8rem; font-weight: bold; color: var(--accent); }
+        .status-badge { display: inline-block; padding: 5px 10px; font-size: 0.8rem; font-weight: bold; color: #000; margin-top: 10px; }
 
-        .main-result {
-            text-align: center;
-            padding: 15px 0;
-            border-bottom: 1px dashed var(--border-color);
-            margin-bottom: 15px;
-        }
+        /* --- FAQ Y AUTOR (FOOTER) --- */
+        .footer-info { max-width: 1000px; margin: 40px auto; padding-top: 20px; border-top: 1px solid var(--border-color); }
+        .faq-item { margin-bottom: 25px; }
+        .faq-q { color: var(--accent); font-weight: bold; text-transform: uppercase; font-size: 0.9rem; margin-bottom: 5px; }
+        .faq-a { color: var(--text-sec); font-size: 0.85rem; }
+        .author-box { margin-top: 40px; font-size: 0.8rem; color: var(--text-sec); border-left: 3px solid var(--accent); padding-left: 15px; }
     </style>
 </head>
 <body>
@@ -243,7 +155,7 @@
     <div class="header-container">
         <div>
             <h1 class="header-title">CellSplit</h1>
-            <div class="header-subtitle" data-i18n="subtitle">HOST CELL LAB TOOLS</div>
+            <div class="header-subtitle">HOST CELL LAB TOOLS</div>
         </div>
         
         <div class="controls">
@@ -252,207 +164,149 @@
                 <span id="lang-en" onclick="setLanguage('en')">EN</span>
             </div>
             
-            <button class="btn-clear" onclick="limpiarDatos()" data-i18n="btnClear">[ Limpiar ]</button>
-            
-            <button id="install-btn" class="btn-clear" style="display:none;" data-i18n="btnInstall">
-                [ Instalar App ]
-            </button>
-            
-            <a href="https://github.com/ebalderasr/CellSplit" target="_blank" style="text-decoration: none;">
-                <button class="btn-clear" style="border-color: var(--text-sec); color: var(--text-sec);" data-i18n="btnDocs">
-                    [ Documentación ]
-                </button>
+            <a href="https://github.com/ebalderasr/CellSplit" target="_blank" class="btn-docs" data-i18n="btnDocs">
+                [ Documentación / Repo ]
             </a>
+
+            <button class="btn-clear" onclick="limpiarDatos()" data-i18n="btnClear">[ Limpiar ]</button>
+            <button id="install-btn" class="btn-clear" style="display:none;" data-i18n="btnInstall">[ Instalar ]</button>
         </div>
     </div>
 
     <div class="app-grid">
-        
-        <div class="card" id="card-conteo">
+        <div class="card">
             <h2 class="card-title" data-i18n="card1Title">01. Conteo de células</h2>
-            
             <div class="input-grid">
                 <div class="input-group">
                     <label style="color: var(--live-color);" data-i18n="lblLive">Vivas</label>
-                    <input type="number" id="inpVivas" placeholder="0" min="0">
+                    <input type="number" id="inpVivas" placeholder="0">
                 </div>
                 <div class="input-group">
                     <label style="color: var(--dead-color);" data-i18n="lblDead">Muertas</label>
-                    <input type="number" id="inpMuertas" placeholder="0" min="0">
+                    <input type="number" id="inpMuertas" placeholder="0">
                 </div>
             </div>
-
             <div class="input-grid">
                 <div class="input-group">
                     <label data-i18n="lblSquares">Cuadrantes</label>
-                    <select id="inpCuadrantes">
-                        <option value="10">10</option>
-                        <option value="5">5</option>
-                    </select>
+                    <select id="inpCuadrantes"><option value="10">10</option><option value="5">5</option></select>
                 </div>
                 <div class="input-group">
                     <label data-i18n="lblDilution">Dilución</label>
-                    <input type="number" id="inpDilucion" value="2" step="0.1" min="1">
+                    <input type="number" id="inpDilucion" value="2">
                 </div>
             </div>
-
             <button class="btn-action" onclick="ejecutarConteo()" data-i18n="btnCalc1">Analizar Conteo</button>
-
+            
             <div id="boxResConteo" class="results-box">
-                <div class="main-result">
-                    <div class="res-label" id="resViableLabel" data-i18n="resViableConc">Concentración de celulas viables (x10⁶ cell/mL)</div>
-                    <div class="res-val"><span id="outConc">0.00</span></div>
-                </div>
-                <div class="res-grid">
-                    <div>
-                        <div class="res-label" data-i18n="resViability">Viabilidad</div>
-                        <div class="res-val-small"><span id="outViab">0</span>%</div>
-                    </div>
-                    <div>
-                        <div class="res-label" data-i18n="resTotal">Total Células</div>
-                        <div class="res-val-small" id="outTotal">0</div>
-                    </div>
+                <div style="text-align: center; margin-bottom: 10px;">
+                    <div data-i18n="resViableConc" class="res-label">Concentración Viable (x10⁶ cell/mL)</div>
+                    <div class="res-val" id="outConc">0.00</div>
                 </div>
                 <div id="outStatus" class="status-badge">Diagnóstico</div>
             </div>
         </div>
 
-        <div class="card" id="card-inoculo">
+        <div class="card">
             <h2 class="card-title" data-i18n="card2Title">02. Pase</h2>
-            
             <div class="input-group">
-                <label style="color: var(--accent);" id="lblCurrentLabel" data-i18n="lblCurrentC">Concentración celular actual (x10⁶ cell/mL)</label>
-                <input type="number" id="inpC1" placeholder="..." step="0.01">
+                <label data-i18n="lblCurrentC">Conc. Actual (x10⁶ cell/mL)</label>
+                <input type="number" id="inpC1" placeholder="...">
             </div>
-
             <div class="input-grid">
                 <div class="input-group">
-                    <label id="lblVolMetaLabel" data-i18n="lblTargetV">Volumen Meta (mL)</label>
-                    <select id="selV2" onchange="toggleCustom('selV2', 'custV2')">
-                        <option value="10">10</option>
-                        <option value="25" selected>25</option>
-                        <option value="50">50</option>
-                        <option value="custom" data-i18n="optOther">Otro</option>
-                    </select>
-                    <input type="number" id="custV2" class="custom-input" placeholder="mL">
+                    <label data-i18n="lblTargetV">Vol. Meta (mL)</label>
+                    <input type="number" id="inpV2" value="25">
                 </div>
-
                 <div class="input-group">
-                    <label data-i18n="lblTargetC">Densidad Meta (x10⁶)</label>
-                    <select id="selC2" onchange="toggleCustom('selC2', 'custC2')">
-                        <option value="0.15">0.15</option>
-                        <option value="0.2">0.20</option>
-                        <option value="0.3" selected>0.30</option>
-                        <option value="0.5">0.50</option>
-                        <option value="custom" data-i18n="optOther2">Otra</option>
-                    </select>
-                    <input type="number" id="custC2" class="custom-input" placeholder="x10⁶">
+                    <label data-i18n="lblTargetC">Dens. Meta (x10⁶)</label>
+                    <input type="number" id="inpC2" value="0.3">
                 </div>
             </div>
-
-            <button class="btn-action" onclick="ejecutarInoculo()" data-i18n="btnCalc2">Calcular Volumen</button>
-
+            <button class="btn-action" onclick="ejecutarInoculo()" data-i18n="btnCalc2">Calcular Pase</button>
             <div id="boxResInoculo" class="results-box">
-                <div class="main-result">
-                    <div class="res-label" data-i18n="resInoculum">Tomar Volumen de Inóculo</div>
+                <div style="text-align: center;">
+                    <div data-i18n="resInoculum" class="res-label">Volumen Inóculo</div>
                     <div class="res-val"><span id="outV1">0.00</span> <span class="u">mL</span></div>
-                </div>
-                <div>
-                    <div class="res-label" style="text-align: center;" data-i18n="resMedia">Volumen de Medio Fresco</div>
-                    <div class="res-val-small" style="text-align: center;"><span id="outMedio">0.0</span> <span class="u">mL</span></div>
                 </div>
             </div>
         </div>
+    </div>
 
+    <div class="footer-info">
+        <div class="faq-item">
+            <div class="faq-q" data-i18n="faqQ">¿Cómo se calcula la concentración?</div>
+            <div class="faq-a" data-i18n="faqA">Se asume una cámara de Neubauer de 0.1mm de profundidad. La fórmula es: (Células / Cuadrantes) * Dilución * 10,000.</div>
+        </div>
+        
+        <div class="author-box">
+            <strong data-i18n="lblAuthor">Autor: Emiliano Balderas</strong><br>
+            <span data-i18n="authorBio">Ingeniero en Biotecnología | Estudiante de Doctorado en Bioquímica, IBt-UNAM</span>
+        </div>
     </div>
 
     <script>
-        // --- DICCIONARIO DE IDIOMAS (i18n) ---
+        // --- DICCIONARIO MULTILINGÜE ---
         const i18n = {
             es: {
-                subtitle: "HOST CELL LAB TOOLS", 
-                btnClear: "[ Limpiar ]", 
+                btnDocs: "[ Documentación / Repo ]",
+                btnClear: "[ Limpiar ]",
                 btnInstall: "[ Instalar App ]",
-                btnDocs: "[ Documentación ]",
                 card1Title: "01. Conteo de células",
                 lblLive: "Vivas", lblDead: "Muertas", lblSquares: "Cuadrantes", lblDilution: "Dilución",
-                btnCalc1: "Analizar Conteo", 
-                resViableConc: 'Concentración de celulas viables (x10⁶ <span class="u">cell/mL</span>)',
-                resViability: "Viabilidad", resTotal: "Total Células",
-                card2Title: "02. Pase", 
-                lblCurrentC: 'Concentración celular actual (x10⁶ <span class="u">cell/mL</span>)',
-                lblTargetV: 'Volumen Meta (<span class="u">mL</span>)',
-                lblTargetC: "Densidad Meta (x10⁶)", optOther: "Otro", optOther2: "Otra",
-                btnCalc2: "Calcular Volumen", resInoculum: "Tomar Volumen de Inóculo",
-                resMedia: "Volumen de Medio Fresco", alertCells: "Ingresa al menos 1 célula.",
-                alertC1: "Ingresa una Concentración Actual válida.",
-                alertTargets: "Verifica los valores meta.",
-                alertLogic: "Error: La densidad meta debe ser menor a la actual.",
-                statLow: "⚠️ Conteo bajo", statHigh: "⚠️ Conteo alto", statOpt: "✔️ Rango óptimo"
+                btnCalc1: "Analizar Conteo",
+                resViableConc: 'Concentración Viable (x10⁶ <span class="u">cell/mL</span>)',
+                card2Title: "02. Pase",
+                lblCurrentC: 'Conc. Actual (x10⁶ <span class="u">cell/mL</span>)',
+                lblTargetV: 'Vol. Meta (<span class="u">mL</span>)',
+                lblTargetC: "Dens. Meta (x10⁶)",
+                btnCalc2: "Calcular Pase",
+                resInoculum: "Volumen Inóculo",
+                alertCells: "Ingresa células válidas.",
+                statLow: "⚠️ Conteo bajo", statHigh: "⚠️ Conteo alto", statOpt: "✔️ Rango óptimo",
+                faqQ: "¿Cómo se calcula la concentración?",
+                faqA: "Se asume una cámara de Neubauer de 0.1mm de profundidad. La fórmula es: (Células / Cuadrantes) * Dilución * 10,000.",
+                lblAuthor: "Autor: Emiliano Balderas",
+                authorBio: "Ingeniero en Biotecnología | Estudiante de Doctorado en Bioquímica, IBt-UNAM"
             },
             en: {
-                subtitle: "HOST CELL LAB TOOLS", 
-                btnClear: "[ Clear All ]", 
-                btnInstall: "[ Install App ]",
                 btnDocs: "[ Docs / Repo ]",
+                btnClear: "[ Clear All ]",
+                btnInstall: "[ Install App ]",
                 card1Title: "01. Viable Count",
                 lblLive: "Live", lblDead: "Dead", lblSquares: "Squares", lblDilution: "Dilution",
-                btnCalc1: "Analyze Count", 
-                resViableConc: 'Viable Concentration (x10⁶ <span class="u">cell/mL</span>)',
-                resViability: "Viability", resTotal: "Total Cells",
-                card2Title: "02. Passage", 
-                lblCurrentC: 'Current Cell Concentration (x10⁶ <span class="u">cell/mL</span>)',
-                lblTargetV: 'Target Volume (<span class="u">mL</span>)',
-                lblTargetC: "Target Density (x10⁶)", optOther: "Other", optOther2: "Other",
-                btnCalc2: "Calculate Volume", resInoculum: "Inoculum Volume to Transfer",
-                resMedia: "Fresh Media to Add", alertCells: "Enter at least 1 cell.",
-                alertC1: "Enter a valid Current Concentration.",
-                alertTargets: "Check target values.",
-                alertLogic: "Error: Target density must be lower than current.",
-                statLow: "⚠️ Low count", statHigh: "⚠️ High count", statOpt: "✔️ Optimal range"
+                btnCalc1: "Analyze Count",
+                resViableConc: 'Viable Conc. (x10⁶ <span class="u">cell/mL</span>)',
+                card2Title: "02. Passage",
+                lblCurrentC: 'Current Conc. (x10⁶ <span class="u">cell/mL</span>)',
+                lblTargetV: 'Target Vol. (<span class="u">mL</span>)',
+                lblTargetC: "Target Dens. (x10⁶)",
+                btnCalc2: "Calculate Passage",
+                resInoculum: "Inoculum Volume",
+                alertCells: "Please enter cells.",
+                statLow: "⚠️ Low count", statHigh: "⚠️ High count", statOpt: "✔️ Optimal range",
+                faqQ: "How is concentration calculated?",
+                faqA: "A Neubauer chamber with 0.1mm depth is assumed. The formula is: (Cells / Squares) * Dilution * 10,000.",
+                lblAuthor: "Author: Emiliano Balderas",
+                authorBio: "Biotechnology Engineer | PhD Student in Biochemistry, IBt-UNAM"
             }
         };
 
-        let currentLang = 'es';
-
-        // Cambiar idioma de la interfaz
+        // --- MANEJO DE IDIOMA ---
         function setLanguage(lang) {
             currentLang = lang;
-            document.getElementById('lang-es').classList.toggle('active', lang === 'es');
-            document.getElementById('lang-en').classList.toggle('active', lang === 'en');
-
             document.querySelectorAll('[data-i18n]').forEach(el => {
                 const key = el.getAttribute('data-i18n');
                 if(i18n[lang][key]) el.innerHTML = i18n[lang][key];
             });
-            document.getElementById('inpC1').placeholder = lang === 'es' ? "Auto-transferencia..." : "Auto-transferred...";
+            document.getElementById('lang-es').className = lang === 'es' ? 'active' : '';
+            document.getElementById('lang-en').className = lang === 'en' ? 'active' : '';
             
-            // Refrescar resultados si ya hay un cálculo hecho
-            if(document.getElementById('boxResConteo').style.display === 'block') ejecutarConteo();
+            // Actualizar placeholder del input auto-transferido
+            document.getElementById('inpC1').placeholder = lang === 'es' ? "Esperando conteo..." : "Waiting for count...";
         }
 
-        // Mostrar/Ocultar campos personalizados (Otro...)
-        function toggleCustom(selectId, inputId) {
-            const select = document.getElementById(selectId);
-            const input = document.getElementById(inputId);
-            input.style.display = select.value === 'custom' ? 'block' : 'none';
-        }
-
-        // Resetear todos los campos
-        function limpiarDatos() {
-            ['inpVivas', 'inpMuertas', 'inpC1', 'custV2', 'custC2'].forEach(id => document.getElementById(id).value = '');
-            document.getElementById('inpDilucion').value = '2';
-            document.getElementById('inpCuadrantes').value = '10';
-            document.getElementById('selV2').value = '25';
-            document.getElementById('selC2').value = '0.3';
-            document.getElementById('custV2').style.display = 'none';
-            document.getElementById('custC2').style.display = 'none';
-            document.getElementById('boxResConteo').style.display = 'none';
-            document.getElementById('boxResInoculo').style.display = 'none';
-            document.getElementById('inpC1').classList.remove('auto-filled');
-        }
-
-        // --- LÓGICA MÓDULO 01: CONTEO ---
+        // --- CALCULOS MÓDULO 01 ---
         function ejecutarConteo() {
             let vivas = parseInt(document.getElementById('inpVivas').value) || 0;
             let muertas = parseInt(document.getElementById('inpMuertas').value) || 0;
@@ -460,108 +314,62 @@
             let dilucion = parseFloat(document.getElementById('inpDilucion').value) || 1;
             let totales = vivas + muertas;
 
-            if (totales <= 0 && document.getElementById('boxResConteo').style.display === 'none') {
-                alert(i18n[currentLang].alertCells); return;
-            } else if (totales <= 0) return;
+            if (totales <= 0) return;
 
-            // Fórmulas
-            let viabilidad = (vivas / totales) * 100;
-            let concMillones = (vivas / cuadrantes) * dilucion * 10000 / 1000000;
-
-            document.getElementById('outConc').innerText = concMillones.toFixed(2);
-            document.getElementById('outViab').innerText = viabilidad.toFixed(1);
-            document.getElementById('outTotal').innerText = totales;
-
-            // Diagnóstico estadístico
-            let statusBadge = document.getElementById('outStatus');
-            let minC = cuadrantes === 10 ? 100 : 50;
-            let maxC = cuadrantes === 10 ? 500 : 250;
-
-            if (totales < minC) {
-                statusBadge.innerText = `${i18n[currentLang].statLow} (<${minC})`;
-                statusBadge.style.backgroundColor = "#d4ff00"; statusBadge.style.color = "#000";
-            } else if (totales > maxC) {
-                statusBadge.innerText = `${i18n[currentLang].statHigh} (>${maxC})`;
-                statusBadge.style.backgroundColor = "#ef5350"; statusBadge.style.color = "#fff";
-            } else {
-                statusBadge.innerText = i18n[currentLang].statOpt;
-                statusBadge.style.backgroundColor = "#4caf50"; statusBadge.style.color = "#fff";
-            }
+            // Fórmula: (Vivas / Cuadrantes) * Dilución * 10,000 / 1,000,000 (para x10^6)
+            let conc = (vivas / cuadrantes) * dilucion * 0.01; 
+            
+            document.getElementById('outConc').innerText = conc.toFixed(2);
             document.getElementById('boxResConteo').style.display = 'block';
+            
+            // Diagnóstico visual
+            let statusBadge = document.getElementById('outStatus');
+            let min = cuadrantes === 10 ? 100 : 50;
+            let max = cuadrantes === 10 ? 500 : 250;
+            
+            if (totales < min) { statusBadge.innerText = i18n[currentLang].statLow; statusBadge.style.backgroundColor = "#d4ff00"; }
+            else if (totales > max) { statusBadge.innerText = i18n[currentLang].statHigh; statusBadge.style.backgroundColor = "#ef5350"; }
+            else { statusBadge.innerText = i18n[currentLang].statOpt; statusBadge.style.backgroundColor = "#4caf50"; }
 
-            // Transferencia de datos automática al Módulo 02
-            let inputC1 = document.getElementById('inpC1');
-            inputC1.value = concMillones.toFixed(2);
-            inputC1.classList.remove('auto-filled');
-            void inputC1.offsetWidth; // Trigger reflow
-            inputC1.classList.add('auto-filled');
+            // Auto-transferencia
+            document.getElementById('inpC1').value = conc.toFixed(2);
         }
 
-        // --- LÓGICA MÓDULO 02: INÓCULO (PASE) ---
+        // --- CALCULOS MÓDULO 02 ---
         function ejecutarInoculo() {
             let c1 = parseFloat(document.getElementById('inpC1').value);
-            let selV2 = document.getElementById('selV2').value;
-            let v2 = selV2 === 'custom' ? parseFloat(document.getElementById('custV2').value) : parseFloat(selV2);
-            let selC2 = document.getElementById('selC2').value;
-            let c2 = selC2 === 'custom' ? parseFloat(document.getElementById('custC2').value) : parseFloat(selC2);
-
-            if (!c1 || c1 <= 0) { alert(i18n[currentLang].alertC1); return; }
-            if (!v2 || !c2) { alert(i18n[currentLang].alertTargets); return; }
-            if (c2 >= c1) { alert(i18n[currentLang].alertLogic); return; }
-
-            // Fórmula C1V1 = C2V2
-            let v1 = (c2 * v2) / c1;
-            let medio = v2 - v1;
+            let v2 = parseFloat(document.getElementById('inpV2').value);
+            let c2 = parseFloat(document.getElementById('inpC2').value);
             
+            if (!c1 || c1 <= c2) return;
+            
+            let v1 = (c2 * v2) / c1;
             document.getElementById('outV1').innerText = v1.toFixed(3);
-            document.getElementById('outMedio').innerText = medio.toFixed(2);
             document.getElementById('boxResInoculo').style.display = 'block';
         }
 
-        // --- LÓGICA PWA E INSTALACIÓN ---
-        let deferredPrompt;
-        const installBtn = document.getElementById('install-btn');
+        function limpiarDatos() { location.reload(); }
 
-        // Capturar evento de instalación
+        // --- PWA LOGIC ---
+        let deferredPrompt;
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
-            // Mostrar botón si no está en modo standalone
-            if (!window.matchMedia('(display-mode: standalone)').matches) {
-                installBtn.style.display = 'block';
-            }
+            document.getElementById('install-btn').style.display = 'block';
         });
 
-        installBtn.addEventListener('click', async () => {
+        document.getElementById('install-btn').addEventListener('click', async () => {
             if (deferredPrompt) {
                 deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                if (outcome === 'accepted') installBtn.style.display = 'none';
                 deferredPrompt = null;
-            } else {
-                const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-                if (isIOS) {
-                    alert(currentLang === 'es' 
-                        ? "iOS: Toca 'Compartir' ↑ y luego 'Agregar a inicio' ⊕." 
-                        : "iOS: Tap 'Share' ↑ and then 'Add to Home Screen' ⊕.");
-                }
             }
         });
 
-        window.addEventListener('appinstalled', () => {
-            installBtn.style.display = 'none';
-        });
-
-        // Registro de Service Worker
         if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js')
-                    .then(reg => console.log('SW activo'))
-                    .catch(err => console.error('Error SW', err));
-            });
+            window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js'); });
         }
 
-        // Iniciar en español por defecto
+        // Inicio por defecto
         setLanguage('es');
     </script>
 </body>
