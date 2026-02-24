@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="CellSplit">
+    <link rel="apple-touch-icon" href="icon-192.png">
     <link rel="manifest" href="manifest.json">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -200,6 +204,21 @@
             border-bottom: 1px dashed var(--border-color);
             margin-bottom: 15px;
         }
+        /* Animación y transición para el botón de instalación */
+        #install-btn {
+            transition: opacity 0.5s ease, transform 0.2s ease;
+            animation: pulse-green 2s infinite;
+        }
+
+        #install-btn:hover {
+            transform: scale(1.05);
+        }
+
+        @keyframes pulse-green {
+            0% { box-shadow: 0 0 0 0 rgba(212, 255, 0, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(212, 255, 0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(212, 255, 0, 0); }
+        }
     </style>
 </head>
 <body>
@@ -215,6 +234,7 @@
                 <span id="lang-en" onclick="setLanguage('en')">EN</span>
             </div>
             <button class="btn-clear" onclick="limpiarDatos()" data-i18n="btnClear">[ Limpiar ]</button>
+            <button id="install-btn" class="btn-clear" style="display:none; border-color: var(--accent); color: var(--accent); margin-top: 5px;">[ Install App ]</button>
         </div>
     </div>
 
@@ -335,7 +355,8 @@
                 alertC1: "Ingresa una Concentración Actual válida.",
                 alertTargets: "Verifica los valores meta.",
                 alertLogic: "Error: La densidad meta debe ser menor a la actual.",
-                statLow: "⚠️ Conteo bajo", statHigh: "⚠️ Conteo alto", statOpt: "✔️ Rango óptimo"
+                statLow: "⚠️ Conteo bajo", statHigh: "⚠️ Conteo alto", statOpt: "✔️ Rango óptimo",
+                btnInstall: "[ Instalar App ]"
             },
             en: {
                 subtitle: "HOST CELL LAB TOOLS", btnClear: "[ Clear All ]", card1Title: "01. Viable Count",
@@ -352,7 +373,8 @@
                 alertC1: "Enter a valid Current Concentration.",
                 alertTargets: "Check target values.",
                 alertLogic: "Error: Target density must be lower than current.",
-                statLow: "⚠️ Low count", statHigh: "⚠️ High count", statOpt: "✔️ Optimal range"
+                statLow: "⚠️ Low count", statHigh: "⚠️ High count", statOpt: "✔️ Optimal range",
+                btnInstall: "[ Install App ]"
             }
         };
 
@@ -450,14 +472,54 @@
 
         // Init language
         setLanguage('es');
-        // Registro del Service Worker para PWA
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('./sw.js')
-                .then(reg => console.log('SW registrado'))
-                .catch(err => console.log('Error SW', err));
-        });
+        // --- LÓGICA DE INSTALACIÓN PWA MEJORADA ---
+let deferredPrompt;
+const installBtn = document.getElementById('install-btn');
+
+// 1. Capturar el evento en Android/Chrome
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    // Solo mostramos el botón si no está ya instalada
+    if (!window.matchMedia('(display-mode: standalone)').matches) {
+        installBtn.style.display = 'block';
     }
+});
+
+// 2. Ejecutar la instalación al dar clic
+installBtn.addEventListener('click', async () => {
+    if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === 'accepted') {
+            installBtn.style.display = 'none';
+        }
+        deferredPrompt = null;
+    } else {
+        // Fallback manual para iOS o si el prompt no está disponible
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        if (isIOS) {
+            alert(currentLang === 'es' 
+                ? "En iOS: Toca el botón 'Compartir' ↑ y selecciona 'Agregar a inicio' ⊕." 
+                : "On iOS: Tap the 'Share' button ↑ and select 'Add to Home Screen' ⊕.");
+        }
+    }
+});
+
+// 3. Ocultar el botón una vez instalada con éxito
+window.addEventListener('appinstalled', () => {
+    installBtn.style.display = 'none';
+    console.log('CellSplit instalada correctamente');
+});
+
+// --- EL REGISTRO QUE YA TENÍAS (MANTENIDO) ---
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+            .then(reg => console.log('SW registrado con éxito'))
+            .catch(err => console.error('Error al registrar SW:', err));
+    });
+}
     </script>
 </body>
 </html>
