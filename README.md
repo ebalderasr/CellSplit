@@ -74,4 +74,7 @@ Biotechnology Engineer | PhD Student in Biochemistry
 *Instituto de Biotecnología (IBt) - UNAM.*
 
 ---
-**Host Cell Lab Suite** – *Brutalist tools for high-performance biotechnology.*
+
+## Part of the Host Cell Suite
+
+**MolarPrep** is part of **Host Cell**, a suite of practical tools for bioprocessing and lab workflows.
