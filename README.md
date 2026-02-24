@@ -68,6 +68,23 @@ A: Yes. Once installed as a PWA, the Service Worker caches the logic for offline
 
 ---
 
+## Installation / PWA (optional)
+
+MolarPrep can be installed as a Progressive Web App (PWA) on supported browsers.
+
+### Desktop / Android
+- Open the live app
+- Click the **Install** button (if shown), or use browser install prompt
+
+### iPhone / iPad (Safari)
+- Open the live app
+- Tap **Share**
+- Select **Add to Home Screen**
+
+Once installed, it can work offline after the necessary files are cached.
+
+---
+
 ## 👨‍🔬 Author
 **Emiliano Balderas**
 Biotechnology Engineer | PhD Student in Biochemistry
