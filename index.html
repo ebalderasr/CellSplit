@@ -234,7 +234,12 @@
                 <span id="lang-en" onclick="setLanguage('en')">EN</span>
             </div>
             <button class="btn-clear" onclick="limpiarDatos()" data-i18n="btnClear">[ Limpiar ]</button>
-            <button id="install-btn" class="btn-clear" style="display:none; border-color: var(--accent); color: var(--accent); margin-top: 5px;">[ Install App ]</button>
+            <button id="install-btn" class="btn-clear" style="display:none; ..." data-i18n="btnInstall">[ Install App ]</button>
+            <a href="https://github.com/ebalderasr/CellSplit" target="_blank" style="text-decoration: none;">
+            <button class="btn-clear" style="border-color: var(--text-sec); color: var(--text-sec);" data-i18n="btnDocs">
+            [ Docs / Repo ]
+            </button>
+    </a>
         </div>
     </div>
 
@@ -356,7 +361,8 @@
                 alertTargets: "Verifica los valores meta.",
                 alertLogic: "Error: La densidad meta debe ser menor a la actual.",
                 statLow: "⚠️ Conteo bajo", statHigh: "⚠️ Conteo alto", statOpt: "✔️ Rango óptimo",
-                btnInstall: "[ Instalar App ]"
+                btnInstall: "[ Instalar App ]",
+                btnDocs: "[ Documentación ]"
             },
             en: {
                 subtitle: "HOST CELL LAB TOOLS", btnClear: "[ Clear All ]", card1Title: "01. Viable Count",
@@ -374,7 +380,8 @@
                 alertTargets: "Check target values.",
                 alertLogic: "Error: Target density must be lower than current.",
                 statLow: "⚠️ Low count", statHigh: "⚠️ High count", statOpt: "✔️ Optimal range",
-                btnInstall: "[ Install App ]"
+                btnInstall: "[ Install App ]",
+                btnDocs: "[ Docs / Repo ]",
             }
         };
 
