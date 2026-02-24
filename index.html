@@ -1,376 +1,1164 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CellSplit | Host Cell</title>
-    
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="CellSplit">
-    <link rel="apple-touch-icon" href="icon-192.png">
-    <link rel="manifest" href="manifest.json">
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+  />
+  <title>CellSplit | Host Cell</title>
 
-    <style>
-        /* --- VARIABLES DE DISEÑO --- */
-        :root {
-            --bg-main: #0a0a0a;
-            --bg-card: #171717;
-            --bg-input: #262626;
-            --accent: #d4ff00; /* Verde Host Cell */
-            --accent-glow: rgba(212, 255, 0, 0.2);
-            --text-pri: #f5f5f5;
-            --text-sec: #a3a3a3;
-            --border-color: #333333;
-            --live-color: #4caf50;
-            --dead-color: #f44336;
-            --danger: #ef5350;
-        }
+  <!-- PWA / Mobile -->
+  <meta name="theme-color" content="#050607" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="CellSplit" />
 
-        /* --- ESTILOS GENERALES --- */
-        body {
-            font-family: 'Courier New', Courier, monospace;
-            background-color: var(--bg-main);
-            color: var(--text-pri);
-            margin: 0;
-            padding: 20px;
-            box-sizing: border-box;
-            line-height: 1.4;
-        }
+  <!-- Icons -->
+  <link rel="icon" type="image/png" href="./icon-192.png" />
+  <link rel="apple-touch-icon" href="./icon-192.png" />
+  <link rel="manifest" href="./manifest.json" />
 
-        /* Clase para evitar confusión entre mL y ML */
-        .u { font-family: Arial, sans-serif; text-transform: none !important; }
+  <style>
+    /* =========================
+       DESIGN TOKENS (CellSplit)
+       MolarPrep-like layout, CellSplit accent
+       ========================= */
+    :root {
+      --bg-main: #050607;
+      --bg-card: #111417;
+      --bg-input: #1b2126;
+      --bg-soft: #0b0f12;
 
-        /* --- ENCABEZADO --- */
-        .header-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 25px;
-            max-width: 1000px;
-            margin: 0 auto 25px auto;
-            border-bottom: 2px solid var(--border-color);
-            padding-bottom: 15px;
-        }
+      --accent: #d4ff00;            /* Host Cell green */
+      --accent-strong: #d4ff00;
+      --accent-glow: rgba(212, 255, 0, 0.14);
 
-        .header-title { color: var(--accent); text-transform: uppercase; font-size: 1.8rem; margin: 0; }
-        .header-subtitle { font-size: 0.8rem; color: var(--text-sec); margin-top: 5px; }
+      --text-pri: #eef3e6;
+      --text-sec: #a7b394;
+      --text-dim: #74806c;
 
-        .controls { display: flex; flex-direction: column; gap: 10px; align-items: flex-end; }
-        
-        .lang-switch { font-weight: bold; color: var(--text-sec); cursor: pointer; }
-        .lang-switch span.active { color: var(--accent); }
+      --border-color: #2a3324;
+      --border-soft: rgba(212, 255, 0, 0.08);
 
-        /* Botones de control estándar */
-        .btn-clear {
-            background: transparent;
-            color: var(--text-sec);
-            border: 1px solid var(--text-sec);
-            padding: 6px 12px;
-            font-size: 0.8rem;
-            cursor: pointer;
-            text-transform: uppercase;
-            font-family: inherit;
-        }
-        .btn-clear:hover { background: var(--danger); color: white; border-color: var(--danger); }
+      --danger: #ef5350;
+      --danger-glow: rgba(239, 83, 80, 0.16);
 
-        /* Botón de Documentación (Resaltado) */
-        .btn-docs {
-            background: var(--bg-input);
-            color: var(--accent);
-            border: 1px solid var(--accent);
-            padding: 8px 14px;
-            font-size: 0.85rem;
-            text-decoration: none;
-            text-transform: uppercase;
-            font-weight: bold;
-            display: inline-block;
-            transition: all 0.3s ease;
-        }
-        .btn-docs:hover { background: var(--accent); color: #000; }
+      --ok: #4caf50;
+      --ok-glow: rgba(76, 175, 80, 0.18);
 
-        /* Botón de instalación con pulso */
-        #install-btn {
-            border-color: var(--accent);
-            color: var(--accent);
-            animation: pulse-green 2s infinite;
-        }
+      --live-color: #7dff7a;
+      --dead-color: #ff7d7d;
 
-        @keyframes pulse-green {
-            0% { box-shadow: 0 0 0 0 rgba(212, 255, 0, 0.4); }
-            70% { box-shadow: 0 0 0 8px rgba(212, 255, 0, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(212, 255, 0, 0); }
-        }
+      --radius: 12px;
+      --radius-sm: 8px;
+      --shadow-soft: 0 8px 24px rgba(0, 0, 0, 0.25);
+      --maxw: 1100px;
+    }
 
-        /* --- GRID Y TARJETAS --- */
-        .app-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 25px;
-            max-width: 1000px;
-            margin: 0 auto;
-        }
-        @media (min-width: 768px) { .app-grid { grid-template-columns: 1fr 1fr; } }
+    * { box-sizing: border-box; }
 
-        .card { background: var(--bg-card); padding: 25px; border: 1px solid var(--border-color); display: flex; flex-direction: column; }
-        .card-title { margin-top: 0; margin-bottom: 20px; font-size: 1.1rem; text-transform: uppercase; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100%;
+    }
 
-        .input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .input-group { margin-bottom: 18px; }
-        label { display: block; font-size: 0.8rem; color: var(--text-sec); text-transform: uppercase; margin-bottom: 6px; font-weight: bold; }
-        
-        input, select {
-            width: 100%; padding: 12px; background: var(--bg-input);
-            border: 1px solid var(--border-color); color: var(--text-pri);
-            font-family: inherit; font-size: 1.1rem; box-sizing: border-box;
-        }
-        
-        input:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 5px var(--accent-glow); }
+    body {
+      font-family: "Courier New", Courier, monospace;
+      color: var(--text-pri);
+      background:
+        radial-gradient(circle at 10% 10%, rgba(212, 255, 0, 0.04), transparent 40%),
+        radial-gradient(circle at 90% 20%, rgba(212, 255, 0, 0.03), transparent 35%),
+        linear-gradient(180deg, #050607 0%, #07090b 100%);
+      line-height: 1.4;
+      padding: 20px;
+    }
 
-        .btn-action {
-            width: 100%; padding: 15px; background: var(--bg-input);
-            color: var(--accent); border: 1px solid var(--accent);
-            font-weight: bold; text-transform: uppercase; cursor: pointer;
-            transition: 0.2s;
-            margin-top: auto;
-        }
-        .btn-action:hover { background: var(--accent); color: #000; }
+    /* Avoid mL / ML typography confusion */
+    .u {
+      font-family: Arial, sans-serif;
+      text-transform: none !important;
+    }
 
-        /* --- RESULTADOS --- */
-        .results-box { margin-top: 20px; padding: 15px; border: 1px dashed var(--accent); background: var(--accent-glow); display: none; }
-        .res-label { font-size: 0.8rem; color: var(--text-sec); text-transform: uppercase; }
-        .res-val { font-size: 1.8rem; font-weight: bold; color: var(--accent); }
-        .status-badge { display: inline-block; padding: 5px 10px; font-size: 0.8rem; font-weight: bold; color: #000; margin-top: 10px; }
+    .container {
+      max-width: var(--maxw);
+      margin: 0 auto;
+    }
 
-        /* --- FAQ Y AUTOR (FOOTER) --- */
-        .footer-info { max-width: 1000px; margin: 40px auto; padding-top: 20px; border-top: 1px solid var(--border-color); }
-        .faq-item { margin-bottom: 25px; }
-        .faq-q { color: var(--accent); font-weight: bold; text-transform: uppercase; font-size: 0.9rem; margin-bottom: 5px; }
-        .faq-a { color: var(--text-sec); font-size: 0.85rem; }
-        .author-box { margin-top: 40px; font-size: 0.8rem; color: var(--text-sec); border-left: 3px solid var(--accent); padding-left: 15px; }
-    </style>
+    /* =========================
+       HEADER
+       ========================= */
+    .header-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      margin: 0 auto 22px auto;
+      padding-bottom: 14px;
+      border-bottom: 2px solid var(--border-color);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 0;
+    }
+
+    .brand-logo {
+      width: 56px;
+      height: 56px;
+      object-fit: contain;
+      border-radius: 10px;
+      border: 1px solid rgba(212, 255, 0, 0.2);
+      box-shadow: 0 0 18px rgba(212, 255, 0, 0.18);
+      background: rgba(255, 255, 255, 0.01);
+      flex-shrink: 0;
+    }
+
+    .header-title {
+      margin: 0;
+      color: var(--accent);
+      text-transform: uppercase;
+      font-size: 1.85rem;
+      letter-spacing: 0.03em;
+      text-shadow: 0 0 10px rgba(212, 255, 0, 0.06);
+    }
+
+    .header-subtitle {
+      margin-top: 4px;
+      color: var(--text-sec);
+      font-size: 0.8rem;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+    }
+
+    .controls {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      align-items: flex-end;
+      flex-shrink: 0;
+    }
+
+    .lang-switch {
+      font-weight: bold;
+      color: var(--text-sec);
+      user-select: none;
+    }
+
+    .lang-switch button {
+      background: transparent;
+      border: 0;
+      color: inherit;
+      font: inherit;
+      cursor: pointer;
+      padding: 0;
+      text-transform: uppercase;
+    }
+
+    .lang-switch button.active {
+      color: var(--accent);
+      text-shadow: 0 0 8px rgba(212, 255, 0, 0.25);
+    }
+
+    .btn-clear,
+    .btn-docs,
+    .btn-action {
+      font-family: inherit;
+      text-transform: uppercase;
+      cursor: pointer;
+      border-radius: var(--radius-sm);
+      transition: 0.2s ease;
+    }
+
+    .btn-clear {
+      background: transparent;
+      color: var(--text-sec);
+      border: 1px solid var(--text-sec);
+      padding: 7px 12px;
+      font-size: 0.8rem;
+    }
+
+    .btn-clear:hover {
+      background: var(--danger);
+      color: #fff;
+      border-color: var(--danger);
+      box-shadow: 0 0 0 3px var(--danger-glow);
+    }
+
+    .btn-docs {
+      background: var(--bg-input);
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      padding: 8px 14px;
+      font-size: 0.85rem;
+      font-weight: bold;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-docs:hover {
+      background: var(--accent);
+      color: #000;
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+
+    #install-btn {
+      border-color: var(--accent);
+      color: var(--accent);
+      animation: pulse-green 2s infinite;
+    }
+
+    #install-btn[hidden] {
+      display: none !important;
+    }
+
+    @keyframes pulse-green {
+      0%   { box-shadow: 0 0 0 0 rgba(212, 255, 0, 0.35); }
+      70%  { box-shadow: 0 0 0 8px rgba(212, 255, 0, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(212, 255, 0, 0); }
+    }
+
+    /* =========================
+       GRID + CARDS
+       ========================= */
+    .app-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 22px;
+      margin: 0 auto;
+    }
+
+    @media (min-width: 900px) {
+      .app-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .card {
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.01), rgba(255, 255, 255, 0)),
+        var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: inset 0 0 0 1px rgba(212, 255, 0, 0.015);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .card.is-invalid {
+      border-color: var(--danger);
+      box-shadow: 0 0 0 3px var(--danger-glow);
+    }
+
+    .card-title {
+      margin: 0 0 10px 0;
+      color: var(--text-pri);
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .card-hint {
+      color: var(--text-dim);
+      font-size: 0.75rem;
+      margin: 0 0 14px 0;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .input-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .input-group {
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--text-sec);
+      font-size: 0.78rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .label-live {
+      color: var(--live-color);
+    }
+
+    .label-dead {
+      color: var(--dead-color);
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-color);
+      background: var(--bg-input);
+      color: var(--text-pri);
+      font-family: inherit;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    input::placeholder {
+      color: #7e8a77;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+
+    .btn-action {
+      width: 100%;
+      margin-top: auto;
+      padding: 14px;
+      background: var(--bg-input);
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      font-weight: bold;
+      font-size: 0.9rem;
+      letter-spacing: 0.03em;
+    }
+
+    .btn-action:hover {
+      background: var(--accent);
+      color: #000;
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+
+    /* =========================
+       RESULTS
+       ========================= */
+    .results-box {
+      margin-top: 16px;
+      padding: 14px;
+      border-radius: 10px;
+      border: 1px dashed var(--accent);
+      background: var(--accent-glow);
+      text-align: center;
+      display: none;
+    }
+
+    .results-box.is-visible {
+      display: block;
+    }
+
+    .results-box.is-error {
+      border-color: var(--danger);
+      background: var(--danger-glow);
+    }
+
+    .results-box.is-error .res-val {
+      color: #ff8a80;
+      text-shadow: none;
+    }
+
+    .res-label {
+      font-size: 0.78rem;
+      color: var(--text-sec);
+      text-transform: uppercase;
+      margin-bottom: 4px;
+      letter-spacing: 0.04em;
+    }
+
+    .res-val {
+      font-size: 1.55rem;
+      font-weight: bold;
+      color: var(--accent);
+      text-shadow: 0 0 10px rgba(212, 255, 0, 0.12);
+      word-break: break-word;
+    }
+
+    .status-badge {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 6px 10px;
+      font-size: 0.8rem;
+      font-weight: bold;
+      color: #000;
+      border-radius: 999px;
+      background: var(--accent);
+    }
+
+    .status-badge.status-ok {
+      background: var(--ok);
+      color: #fff;
+    }
+
+    .status-badge.status-low {
+      background: var(--accent);
+      color: #000;
+    }
+
+    .status-badge.status-high {
+      background: var(--danger);
+      color: #fff;
+    }
+
+    .status-badge.status-neutral {
+      background: #616161;
+      color: #fff;
+    }
+
+    .result-divider {
+      margin: 12px 0;
+      border: 0;
+      border-top: 1px solid rgba(212, 255, 0, 0.14);
+    }
+
+    .aux-result {
+      color: var(--text-sec);
+      font-size: 0.82rem;
+      margin-top: 2px;
+    }
+
+    /* =========================
+       FOOTER
+       ========================= */
+    .footer-info {
+      margin: 34px auto 18px auto;
+      padding-top: 18px;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .faq-item {
+      margin-bottom: 24px;
+    }
+
+    .faq-q {
+      color: var(--accent);
+      font-weight: bold;
+      text-transform: uppercase;
+      font-size: 0.88rem;
+      margin-bottom: 6px;
+      letter-spacing: 0.03em;
+    }
+
+    .faq-a {
+      color: var(--text-sec);
+      font-size: 0.84rem;
+    }
+
+    .author-box {
+      border-left: 3px solid var(--accent);
+      padding-left: 14px;
+      color: var(--text-sec);
+      font-size: 0.82rem;
+    }
+
+    .author-box strong {
+      color: var(--text-pri);
+    }
+
+    /* =========================
+       MOBILE
+       ========================= */
+    @media (max-width: 768px) {
+      body {
+        padding: 14px;
+      }
+
+      .header-container {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .controls {
+        align-items: flex-start;
+      }
+
+      .brand-logo {
+        width: 48px;
+        height: 48px;
+      }
+
+      .header-title {
+        font-size: 1.45rem;
+      }
+    }
+  </style>
 </head>
 <body>
-
-    <div class="header-container">
+  <div class="container">
+    <!-- Header -->
+    <header class="header-container">
+      <div class="brand">
+        <img src="./icon-192.png" alt="CellSplit logo" class="brand-logo" />
         <div>
-            <h1 class="header-title">CellSplit</h1>
-            <div class="header-subtitle">HOST CELL LAB TOOLS</div>
+          <h1 class="header-title">CellSplit</h1>
+          <div class="header-subtitle">Host Cell Lab Tools</div>
         </div>
-        
-        <div class="controls">
-            <div class="lang-switch">
-                <span id="lang-es" class="active" onclick="setLanguage('es')">ES</span> | 
-                <span id="lang-en" onclick="setLanguage('en')">EN</span>
-            </div>
-            
-            <a href="https://github.com/ebalderasr/CellSplit" target="_blank" class="btn-docs" data-i18n="btnDocs">
-                [ Documentación / Repo ]
-            </a>
+      </div>
 
-            <button class="btn-clear" onclick="limpiarDatos()" data-i18n="btnClear">[ Limpiar ]</button>
-            <button id="install-btn" class="btn-clear" style="display:none;" data-i18n="btnInstall">[ Instalar ]</button>
-        </div>
-    </div>
-
-    <div class="app-grid">
-        <div class="card">
-            <h2 class="card-title" data-i18n="card1Title">01. Conteo de células</h2>
-            <div class="input-grid">
-                <div class="input-group">
-                    <label style="color: var(--live-color);" data-i18n="lblLive">Vivas</label>
-                    <input type="number" id="inpVivas" placeholder="0">
-                </div>
-                <div class="input-group">
-                    <label style="color: var(--dead-color);" data-i18n="lblDead">Muertas</label>
-                    <input type="number" id="inpMuertas" placeholder="0">
-                </div>
-            </div>
-            <div class="input-grid">
-                <div class="input-group">
-                    <label data-i18n="lblSquares">Cuadrantes</label>
-                    <select id="inpCuadrantes"><option value="10">10</option><option value="5">5</option></select>
-                </div>
-                <div class="input-group">
-                    <label data-i18n="lblDilution">Dilución</label>
-                    <input type="number" id="inpDilucion" value="2">
-                </div>
-            </div>
-            <button class="btn-action" onclick="ejecutarConteo()" data-i18n="btnCalc1">Analizar Conteo</button>
-            
-            <div id="boxResConteo" class="results-box">
-                <div style="text-align: center; margin-bottom: 10px;">
-                    <div data-i18n="resViableConc" class="res-label">Concentración Viable (x10⁶ cell/mL)</div>
-                    <div class="res-val" id="outConc">0.00</div>
-                </div>
-                <div id="outStatus" class="status-badge">Diagnóstico</div>
-            </div>
+      <div class="controls">
+        <div class="lang-switch" aria-label="Language selector">
+          <button id="lang-es" class="active" type="button">ES</button>
+          <span aria-hidden="true"> | </span>
+          <button id="lang-en" type="button">EN</button>
         </div>
 
-        <div class="card">
-            <h2 class="card-title" data-i18n="card2Title">02. Pase</h2>
-            <div class="input-group">
-                <label data-i18n="lblCurrentC">Conc. Actual (x10⁶ cell/mL)</label>
-                <input type="number" id="inpC1" placeholder="...">
-            </div>
-            <div class="input-grid">
-                <div class="input-group">
-                    <label data-i18n="lblTargetV">Vol. Meta (mL)</label>
-                    <input type="number" id="inpV2" value="25">
-                </div>
-                <div class="input-group">
-                    <label data-i18n="lblTargetC">Dens. Meta (x10⁶)</label>
-                    <input type="number" id="inpC2" value="0.3">
-                </div>
-            </div>
-            <button class="btn-action" onclick="ejecutarInoculo()" data-i18n="btnCalc2">Calcular Pase</button>
-            <div id="boxResInoculo" class="results-box">
-                <div style="text-align: center;">
-                    <div data-i18n="resInoculum" class="res-label">Volumen Inóculo</div>
-                    <div class="res-val"><span id="outV1">0.00</span> <span class="u">mL</span></div>
-                </div>
-            </div>
-        </div>
-    </div>
+        <a
+          href="https://github.com/ebalderasr/CellSplit"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="btn-docs"
+          data-i18n="btnDocs"
+          id="btn-docs"
+        >
+          [ Documentación / Repo ]
+        </a>
 
-    <div class="footer-info">
-        <div class="faq-item">
-            <div class="faq-q" data-i18n="faqQ">¿Cómo se calcula la concentración?</div>
-            <div class="faq-a" data-i18n="faqA">Se asume una cámara de Neubauer de 0.1mm de profundidad. La fórmula es: (Células / Cuadrantes) * Dilución * 10,000.</div>
-        </div>
-        
-        <div class="author-box">
-            <strong data-i18n="lblAuthor">Autor: Emiliano Balderas</strong><br>
-            <span data-i18n="authorBio">Ingeniero en Biotecnología | Estudiante de Doctorado en Bioquímica, IBt-UNAM</span>
-        </div>
-    </div>
+        <button class="btn-clear" id="btn-clear" type="button" data-i18n="btnClear">
+          [ Limpiar ]
+        </button>
 
-    <script>
-        // --- DICCIONARIO MULTILINGÜE ---
-        const i18n = {
-            es: {
-                btnDocs: "[ Documentación / Repo ]",
-                btnClear: "[ Limpiar ]",
-                btnInstall: "[ Instalar App ]",
-                card1Title: "01. Conteo de células",
-                lblLive: "Vivas", lblDead: "Muertas", lblSquares: "Cuadrantes", lblDilution: "Dilución",
-                btnCalc1: "Analizar Conteo",
-                resViableConc: 'Concentración Viable (x10⁶ <span class="u">cell/mL</span>)',
-                card2Title: "02. Pase",
-                lblCurrentC: 'Conc. Actual (x10⁶ <span class="u">cell/mL</span>)',
-                lblTargetV: 'Vol. Meta (<span class="u">mL</span>)',
-                lblTargetC: "Dens. Meta (x10⁶)",
-                btnCalc2: "Calcular Pase",
-                resInoculum: "Volumen Inóculo",
-                alertCells: "Ingresa células válidas.",
-                statLow: "⚠️ Conteo bajo", statHigh: "⚠️ Conteo alto", statOpt: "✔️ Rango óptimo",
-                faqQ: "¿Cómo se calcula la concentración?",
-                faqA: "Se asume una cámara de Neubauer de 0.1mm de profundidad. La fórmula es: (Células / Cuadrantes) * Dilución * 10,000.",
-                lblAuthor: "Autor: Emiliano Balderas",
-                authorBio: "Ingeniero en Biotecnología | Estudiante de Doctorado en Bioquímica, IBt-UNAM"
-            },
-            en: {
-                btnDocs: "[ Docs / Repo ]",
-                btnClear: "[ Clear All ]",
-                btnInstall: "[ Install App ]",
-                card1Title: "01. Viable Count",
-                lblLive: "Live", lblDead: "Dead", lblSquares: "Squares", lblDilution: "Dilution",
-                btnCalc1: "Analyze Count",
-                resViableConc: 'Viable Conc. (x10⁶ <span class="u">cell/mL</span>)',
-                card2Title: "02. Passage",
-                lblCurrentC: 'Current Conc. (x10⁶ <span class="u">cell/mL</span>)',
-                lblTargetV: 'Target Vol. (<span class="u">mL</span>)',
-                lblTargetC: "Target Dens. (x10⁶)",
-                btnCalc2: "Calculate Passage",
-                resInoculum: "Inoculum Volume",
-                alertCells: "Please enter cells.",
-                statLow: "⚠️ Low count", statHigh: "⚠️ High count", statOpt: "✔️ Optimal range",
-                faqQ: "How is concentration calculated?",
-                faqA: "A Neubauer chamber with 0.1mm depth is assumed. The formula is: (Cells / Squares) * Dilution * 10,000.",
-                lblAuthor: "Author: Emiliano Balderas",
-                authorBio: "Biotechnology Engineer | PhD Student in Biochemistry, IBt-UNAM"
-            }
-        };
+        <button class="btn-clear" id="install-btn" type="button" hidden data-i18n="btnInstall">
+          [ Instalar App ]
+        </button>
+      </div>
+    </header>
 
-        // --- MANEJO DE IDIOMA ---
-        function setLanguage(lang) {
-            currentLang = lang;
-            document.querySelectorAll('[data-i18n]').forEach(el => {
-                const key = el.getAttribute('data-i18n');
-                if(i18n[lang][key]) el.innerHTML = i18n[lang][key];
-            });
-            document.getElementById('lang-es').className = lang === 'es' ? 'active' : '';
-            document.getElementById('lang-en').className = lang === 'en' ? 'active' : '';
-            
-            // Actualizar placeholder del input auto-transferido
-            document.getElementById('inpC1').placeholder = lang === 'es' ? "Esperando conteo..." : "Waiting for count...";
+    <!-- Main App -->
+    <main class="app-grid">
+      <!-- Module 1: Cell Count -->
+      <section class="card" id="card-count">
+        <h2 class="card-title" data-i18n="card1Title">01. Conteo de células</h2>
+        <div class="card-hint" data-i18n="card1Hint">
+          Neubauer 0.1 mm · concentración viable (x10⁶ <span class="u">cell/mL</span>)
+        </div>
+
+        <div class="input-grid">
+          <div class="input-group">
+            <label for="inpVivas" class="label-live" data-i18n="lblLive">Vivas</label>
+            <input type="number" id="inpVivas" placeholder="0" min="0" step="1" />
+          </div>
+
+          <div class="input-group">
+            <label for="inpMuertas" class="label-dead" data-i18n="lblDead">Muertas</label>
+            <input type="number" id="inpMuertas" placeholder="0" min="0" step="1" />
+          </div>
+        </div>
+
+        <div class="input-grid">
+          <div class="input-group">
+            <label for="inpCuadrantes" data-i18n="lblSquares">Cuadrantes</label>
+            <select id="inpCuadrantes">
+              <option value="10">10</option>
+              <option value="5">5</option>
+            </select>
+          </div>
+
+          <div class="input-group">
+            <label for="inpDilucion" data-i18n="lblDilution">Dilución</label>
+            <input type="number" id="inpDilucion" value="2" min="0.0001" step="any" />
+          </div>
+        </div>
+
+        <button class="btn-action" id="btn-calc-count" type="button" data-i18n="btnCalc1">
+          Analizar Conteo
+        </button>
+
+        <div id="boxResConteo" class="results-box" aria-live="polite">
+          <div class="res-label" data-i18n="resViableConc">
+            Concentración Viable (x10⁶ <span class="u">cell/mL</span>)
+          </div>
+          <div class="res-val" id="outConc">---</div>
+
+          <div class="aux-result" id="outViabilityRow">
+            <span data-i18n="resViability">Viabilidad</span>:
+            <strong id="outViability">---</strong>
+          </div>
+
+          <div id="outStatus" class="status-badge status-neutral" data-i18n="statusDefault">
+            Diagnóstico
+          </div>
+        </div>
+      </section>
+
+      <!-- Module 2: Passage / Inoculum -->
+      <section class="card" id="card-passage">
+        <h2 class="card-title" data-i18n="card2Title">02. Pase</h2>
+        <div class="card-hint" data-i18n="card2Hint">
+          C1V1 = C2V2 · cálculo de inóculo
+        </div>
+
+        <div class="input-group">
+          <label for="inpC1" data-i18n="lblCurrentC">Conc. Actual (x10⁶ cell/mL)</label>
+          <input
+            type="number"
+            id="inpC1"
+            placeholder="Esperando conteo..."
+            min="0.0001"
+            step="any"
+          />
+        </div>
+
+        <div class="input-grid">
+          <div class="input-group">
+            <label for="inpV2" data-i18n="lblTargetV">Vol. Meta (mL)</label>
+            <input type="number" id="inpV2" value="25" min="0.0001" step="any" />
+          </div>
+
+          <div class="input-group">
+            <label for="inpC2" data-i18n="lblTargetC">Dens. Meta (x10⁶)</label>
+            <input type="number" id="inpC2" value="0.3" min="0.0001" step="any" />
+          </div>
+        </div>
+
+        <button class="btn-action" id="btn-calc-passage" type="button" data-i18n="btnCalc2">
+          Calcular Pase
+        </button>
+
+        <div id="boxResInoculo" class="results-box" aria-live="polite">
+          <div class="res-label" data-i18n="resInoculum">Volumen Inóculo</div>
+          <div class="res-val">
+            <span id="outV1">---</span> <span class="u">mL</span>
+          </div>
+
+          <hr class="result-divider" />
+
+          <div class="aux-result">
+            <span data-i18n="resFreshMedium">Volumen de medio fresco</span>:
+            <strong><span id="outFreshMedium">---</span> <span class="u">mL</span></strong>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer-info">
+      <div class="faq-item">
+        <div class="faq-q" data-i18n="faqQ">¿Cómo se calcula la concentración?</div>
+        <div class="faq-a" data-i18n="faqA">
+          Se asume una cámara de Neubauer de 0.1mm de profundidad. La fórmula es:
+          (Células / Cuadrantes) × Dilución × 10,000.
+        </div>
+      </div>
+
+      <div class="author-box">
+        <strong data-i18n="lblAuthor">Autor: Emiliano Balderas</strong><br />
+        <span data-i18n="authorBio">
+          Ingeniero en Biotecnología | Estudiante de Doctorado en Bioquímica, IBt-UNAM
+        </span>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    /**
+     * ============================
+     * CellSplit Front-End Script
+     * ============================
+     * Goals:
+     * - MolarPrep-style readability and structure
+     * - Separate UI helpers from calculation logic
+     * - Keep formulas explicit and easy to edit
+     */
+
+    const APP = {
+      defaultLanguage: "es",
+      currentLanguage: "es",
+      deferredInstallPrompt: null,
+    };
+
+    const I18N = {
+      es: {
+        btnDocs: "[ Documentación / Repo ]",
+        btnClear: "[ Limpiar ]",
+        btnInstall: "[ Instalar App ]",
+
+        card1Title: "01. Conteo de células",
+        card1Hint: 'Neubauer 0.1 mm · concentración viable (x10⁶ <span class="u">cell/mL</span>)',
+        lblLive: "Vivas",
+        lblDead: "Muertas",
+        lblSquares: "Cuadrantes",
+        lblDilution: "Dilución",
+        btnCalc1: "Analizar Conteo",
+        resViableConc: 'Concentración Viable (x10⁶ <span class="u">cell/mL</span>)',
+        resViability: "Viabilidad",
+        statusDefault: "Diagnóstico",
+
+        card2Title: "02. Pase",
+        card2Hint: "C1V1 = C2V2 · cálculo de inóculo",
+        lblCurrentC: 'Conc. Actual (x10⁶ <span class="u">cell/mL</span>)',
+        lblTargetV: 'Vol. Meta (<span class="u">mL</span>)',
+        lblTargetC: "Dens. Meta (x10⁶)",
+        btnCalc2: "Calcular Pase",
+        resInoculum: "Volumen Inóculo",
+        resFreshMedium: "Volumen de medio fresco",
+
+        placeholderC1: "Esperando conteo...",
+
+        err: "ERR",
+        errCells: "Ingresa células válidas.",
+        errPassage: "Verifica C1, V2 y C2.",
+        errPassageRange: "C1 debe ser mayor que C2.",
+
+        statLow: "⚠️ Conteo bajo",
+        statHigh: "⚠️ Conteo alto",
+        statOpt: "✔️ Rango óptimo",
+
+        faqQ: "¿Cómo se calcula la concentración?",
+        faqA: "Se asume una cámara de Neubauer de 0.1mm de profundidad. La fórmula es: (Células / Cuadrantes) × Dilución × 10,000.",
+        lblAuthor: "Autor: Emiliano Balderas",
+        authorBio: "Ingeniero en Biotecnología | Estudiante de Doctorado en Bioquímica, IBt-UNAM",
+      },
+
+      en: {
+        btnDocs: "[ Docs / Repo ]",
+        btnClear: "[ Clear ]",
+        btnInstall: "[ Install App ]",
+
+        card1Title: "01. Cell Count",
+        card1Hint: 'Neubauer 0.1 mm · viable concentration (x10⁶ <span class="u">cell/mL</span>)',
+        lblLive: "Live",
+        lblDead: "Dead",
+        lblSquares: "Squares",
+        lblDilution: "Dilution",
+        btnCalc1: "Analyze Count",
+        resViableConc: 'Viable Conc. (x10⁶ <span class="u">cell/mL</span>)',
+        resViability: "Viability",
+        statusDefault: "Diagnostic",
+
+        card2Title: "02. Passage",
+        card2Hint: "C1V1 = C2V2 · inoculum calculation",
+        lblCurrentC: 'Current Conc. (x10⁶ <span class="u">cell/mL</span>)',
+        lblTargetV: 'Target Vol. (<span class="u">mL</span>)',
+        lblTargetC: "Target Dens. (x10⁶)",
+        btnCalc2: "Calculate Passage",
+        resInoculum: "Inoculum Volume",
+        resFreshMedium: "Fresh medium volume",
+
+        placeholderC1: "Waiting for count...",
+
+        err: "ERR",
+        errCells: "Please enter valid cell counts.",
+        errPassage: "Please check C1, V2 and C2.",
+        errPassageRange: "C1 must be greater than C2.",
+
+        statLow: "⚠️ Low count",
+        statHigh: "⚠️ High count",
+        statOpt: "✔️ Optimal range",
+
+        faqQ: "How is concentration calculated?",
+        faqA: "A Neubauer chamber with 0.1mm depth is assumed. The formula is: (Cells / Squares) × Dilution × 10,000.",
+        lblAuthor: "Author: Emiliano Balderas",
+        authorBio: "Biotechnology Engineer | PhD Student in Biochemistry, IBt-UNAM",
+      },
+    };
+
+    /**
+     * DOM map
+     * Centralized so the script is easier to maintain.
+     */
+    const DOM = {
+      // language
+      langEs: document.getElementById("lang-es"),
+      langEn: document.getElementById("lang-en"),
+
+      // top controls
+      btnClear: document.getElementById("btn-clear"),
+      btnInstall: document.getElementById("install-btn"),
+
+      // cards
+      cardCount: document.getElementById("card-count"),
+      cardPassage: document.getElementById("card-passage"),
+
+      // module 1 inputs
+      inpVivas: document.getElementById("inpVivas"),
+      inpMuertas: document.getElementById("inpMuertas"),
+      inpCuadrantes: document.getElementById("inpCuadrantes"),
+      inpDilucion: document.getElementById("inpDilucion"),
+      btnCalcCount: document.getElementById("btn-calc-count"),
+
+      // module 1 outputs
+      boxResConteo: document.getElementById("boxResConteo"),
+      outConc: document.getElementById("outConc"),
+      outViability: document.getElementById("outViability"),
+      outStatus: document.getElementById("outStatus"),
+
+      // module 2 inputs
+      inpC1: document.getElementById("inpC1"),
+      inpV2: document.getElementById("inpV2"),
+      inpC2: document.getElementById("inpC2"),
+      btnCalcPassage: document.getElementById("btn-calc-passage"),
+
+      // module 2 outputs
+      boxResInoculo: document.getElementById("boxResInoculo"),
+      outV1: document.getElementById("outV1"),
+      outFreshMedium: document.getElementById("outFreshMedium"),
+    };
+
+    /* =========================
+       Utilities
+       ========================= */
+
+    function t(key) {
+      const pack = I18N[APP.currentLanguage] || I18N[APP.defaultLanguage];
+      return pack[key] ?? key;
+    }
+
+    function parseNumber(inputElement) {
+      const value = Number.parseFloat(inputElement.value);
+      return Number.isFinite(value) ? value : NaN;
+    }
+
+    function parseInteger(inputElement) {
+      const value = Number.parseInt(inputElement.value, 10);
+      return Number.isFinite(value) ? value : NaN;
+    }
+
+    function isFiniteNonNegative(value) {
+      return Number.isFinite(value) && value >= 0;
+    }
+
+    function isFinitePositive(value) {
+      return Number.isFinite(value) && value > 0;
+    }
+
+    function formatFixed(value, decimals = 2) {
+      return Number.isFinite(value) ? value.toFixed(decimals) : t("err");
+    }
+
+    function showResultBox(box, { isError = false } = {}) {
+      box.classList.add("is-visible");
+      box.classList.toggle("is-error", isError);
+    }
+
+    function hideResultBox(box) {
+      box.classList.remove("is-visible", "is-error");
+    }
+
+    function setCardValidity(cardElement, isValid) {
+      cardElement.classList.toggle("is-invalid", !isValid);
+    }
+
+    function resetStatusBadge() {
+      DOM.outStatus.className = "status-badge status-neutral";
+      DOM.outStatus.textContent = t("statusDefault");
+    }
+
+    function setStatusBadge(statusType) {
+      DOM.outStatus.className = "status-badge";
+
+      if (statusType === "low") {
+        DOM.outStatus.classList.add("status-low");
+        DOM.outStatus.textContent = t("statLow");
+        return;
+      }
+
+      if (statusType === "high") {
+        DOM.outStatus.classList.add("status-high");
+        DOM.outStatus.textContent = t("statHigh");
+        return;
+      }
+
+      DOM.outStatus.classList.add("status-ok");
+      DOM.outStatus.textContent = t("statOpt");
+    }
+
+    /* =========================
+       UI State / Reset
+       ========================= */
+
+    function resetCountOutputs() {
+      DOM.outConc.textContent = "---";
+      DOM.outViability.textContent = "---";
+      resetStatusBadge();
+      hideResultBox(DOM.boxResConteo);
+      setCardValidity(DOM.cardCount, true);
+    }
+
+    function resetPassageOutputs() {
+      DOM.outV1.textContent = "---";
+      DOM.outFreshMedium.textContent = "---";
+      hideResultBox(DOM.boxResInoculo);
+      setCardValidity(DOM.cardPassage, true);
+    }
+
+    function resetAllOutputs() {
+      resetCountOutputs();
+      resetPassageOutputs();
+    }
+
+    function resetInputs() {
+      DOM.inpVivas.value = "";
+      DOM.inpMuertas.value = "";
+      DOM.inpCuadrantes.value = "10";
+      DOM.inpDilucion.value = "2";
+
+      DOM.inpC1.value = "";
+      DOM.inpV2.value = "25";
+      DOM.inpC2.value = "0.3";
+      DOM.inpC1.placeholder = t("placeholderC1");
+    }
+
+    function resetApp() {
+      resetInputs();
+      resetAllOutputs();
+    }
+
+    /* =========================
+       Module 1: Cell Count
+       =========================
+       Formula (Neubauer 0.1 mm):
+       concentration (cells/mL) = (cells counted / squares) * dilution * 10,000
+
+       We report in x10^6 cells/mL, so:
+       concentration (x10^6 cells/mL) = ((cells counted / squares) * dilution * 10,000) / 1,000,000
+                                       = (cells counted / squares) * dilution * 0.01
+     */
+    function analyzeCount() {
+      const live = parseInteger(DOM.inpVivas);
+      const dead = parseInteger(DOM.inpMuertas);
+      const squares = parseInteger(DOM.inpCuadrantes);
+      const dilution = parseNumber(DOM.inpDilucion);
+
+      const inputsValid =
+        isFiniteNonNegative(live) &&
+        isFiniteNonNegative(dead) &&
+        isFinitePositive(squares) &&
+        isFinitePositive(dilution);
+
+      setCardValidity(DOM.cardCount, inputsValid);
+
+      if (!inputsValid) {
+        DOM.outConc.textContent = t("err");
+        DOM.outViability.textContent = t("err");
+        resetStatusBadge();
+        showResultBox(DOM.boxResConteo, { isError: true });
+        return;
+      }
+
+      const total = live + dead;
+
+      if (total <= 0) {
+        DOM.outConc.textContent = t("err");
+        DOM.outViability.textContent = t("err");
+        resetStatusBadge();
+        showResultBox(DOM.boxResConteo, { isError: true });
+        return;
+      }
+
+      // Viable concentration in x10^6 cells/mL
+      const viableConc = (live / squares) * dilution * 0.01;
+
+      // Viability percentage
+      const viabilityPct = (live / total) * 100;
+
+      DOM.outConc.textContent = formatFixed(viableConc, 2);
+      DOM.outViability.textContent = `${formatFixed(viabilityPct, 1)}%`;
+
+      // Diagnostic based on total counted cells and selected square count
+      const minTotal = squares === 10 ? 100 : 50;
+      const maxTotal = squares === 10 ? 500 : 250;
+
+      if (total < minTotal) {
+        setStatusBadge("low");
+      } else if (total > maxTotal) {
+        setStatusBadge("high");
+      } else {
+        setStatusBadge("ok");
+      }
+
+      // Auto-transfer concentration to module 2
+      DOM.inpC1.value = viableConc.toFixed(2);
+
+      showResultBox(DOM.boxResConteo, { isError: false });
+    }
+
+    /* =========================
+       Module 2: Passage / Inoculum
+       =========================
+       C1V1 = C2V2  => V1 = (C2 * V2) / C1
+     */
+    function calculatePassage() {
+      const c1 = parseNumber(DOM.inpC1); // current concentration (x10^6 cells/mL)
+      const v2 = parseNumber(DOM.inpV2); // target final volume (mL)
+      const c2 = parseNumber(DOM.inpC2); // target density (x10^6 cells/mL)
+
+      const basicInputsValid =
+        isFinitePositive(c1) &&
+        isFinitePositive(v2) &&
+        isFinitePositive(c2);
+
+      setCardValidity(DOM.cardPassage, basicInputsValid);
+
+      if (!basicInputsValid) {
+        DOM.outV1.textContent = t("err");
+        DOM.outFreshMedium.textContent = t("err");
+        showResultBox(DOM.boxResInoculo, { isError: true });
+        return;
+      }
+
+      if (c1 <= c2) {
+        // Biologically / operationally, current concentration must exceed target density
+        // to compute a meaningful dilution/inoculum volume.
+        DOM.outV1.textContent = t("err");
+        DOM.outFreshMedium.textContent = t("err");
+        setCardValidity(DOM.cardPassage, false);
+        showResultBox(DOM.boxResInoculo, { isError: true });
+        return;
+      }
+
+      const v1 = (c2 * v2) / c1;          // inoculum volume (mL)
+      const freshMedium = v2 - v1;        // medium to add (mL)
+
+      DOM.outV1.textContent = formatFixed(v1, 3);
+      DOM.outFreshMedium.textContent = formatFixed(freshMedium, 3);
+
+      showResultBox(DOM.boxResInoculo, { isError: false });
+    }
+
+    /* =========================
+       Internationalization (i18n)
+       ========================= */
+
+    function applyTranslations(language) {
+      const pack = I18N[language] || I18N[APP.defaultLanguage];
+
+      document.querySelectorAll("[data-i18n]").forEach((node) => {
+        const key = node.getAttribute("data-i18n");
+        if (pack[key]) node.innerHTML = pack[key];
+      });
+
+      DOM.langEs.classList.toggle("active", language === "es");
+      DOM.langEn.classList.toggle("active", language === "en");
+
+      DOM.inpC1.placeholder = pack.placeholderC1 || "";
+    }
+
+    function setLanguage(language) {
+      if (!I18N[language]) return;
+
+      APP.currentLanguage = language;
+      applyTranslations(language);
+
+      try {
+        localStorage.setItem("cellsplit_lang", language);
+      } catch (_) {
+        /* no-op */
+      }
+    }
+
+    function loadSavedLanguage() {
+      try {
+        const saved = localStorage.getItem("cellsplit_lang");
+        if (saved && I18N[saved]) {
+          APP.currentLanguage = saved;
         }
+      } catch (_) {
+        /* no-op */
+      }
+    }
 
-        // --- CALCULOS MÓDULO 01 ---
-        function ejecutarConteo() {
-            let vivas = parseInt(document.getElementById('inpVivas').value) || 0;
-            let muertas = parseInt(document.getElementById('inpMuertas').value) || 0;
-            let cuadrantes = parseInt(document.getElementById('inpCuadrantes').value);
-            let dilucion = parseFloat(document.getElementById('inpDilucion').value) || 1;
-            let totales = vivas + muertas;
+    /* =========================
+       PWA Install + Service Worker
+       ========================= */
 
-            if (totales <= 0) return;
+    function setupInstallPrompt() {
+      window.addEventListener("beforeinstallprompt", (event) => {
+        event.preventDefault();
+        APP.deferredInstallPrompt = event;
+        DOM.btnInstall.hidden = false;
+      });
 
-            // Fórmula: (Vivas / Cuadrantes) * Dilución * 10,000 / 1,000,000 (para x10^6)
-            let conc = (vivas / cuadrantes) * dilucion * 0.01; 
-            
-            document.getElementById('outConc').innerText = conc.toFixed(2);
-            document.getElementById('boxResConteo').style.display = 'block';
-            
-            // Diagnóstico visual
-            let statusBadge = document.getElementById('outStatus');
-            let min = cuadrantes === 10 ? 100 : 50;
-            let max = cuadrantes === 10 ? 500 : 250;
-            
-            if (totales < min) { statusBadge.innerText = i18n[currentLang].statLow; statusBadge.style.backgroundColor = "#d4ff00"; }
-            else if (totales > max) { statusBadge.innerText = i18n[currentLang].statHigh; statusBadge.style.backgroundColor = "#ef5350"; }
-            else { statusBadge.innerText = i18n[currentLang].statOpt; statusBadge.style.backgroundColor = "#4caf50"; }
+      DOM.btnInstall.addEventListener("click", async () => {
+        if (!APP.deferredInstallPrompt) return;
 
-            // Auto-transferencia
-            document.getElementById('inpC1').value = conc.toFixed(2);
-        }
+        APP.deferredInstallPrompt.prompt();
+        APP.deferredInstallPrompt = null;
+        DOM.btnInstall.hidden = true;
+      });
+    }
 
-        // --- CALCULOS MÓDULO 02 ---
-        function ejecutarInoculo() {
-            let c1 = parseFloat(document.getElementById('inpC1').value);
-            let v2 = parseFloat(document.getElementById('inpV2').value);
-            let c2 = parseFloat(document.getElementById('inpC2').value);
-            
-            if (!c1 || c1 <= c2) return;
-            
-            let v1 = (c2 * v2) / c1;
-            document.getElementById('outV1').innerText = v1.toFixed(3);
-            document.getElementById('boxResInoculo').style.display = 'block';
-        }
+    function registerServiceWorker() {
+      if (!("serviceWorker" in navigator)) return;
 
-        function limpiarDatos() { location.reload(); }
-
-        // --- PWA LOGIC ---
-        let deferredPrompt;
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            document.getElementById('install-btn').style.display = 'block';
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("./sw.js").catch((error) => {
+          console.warn("SW registration failed:", error);
         });
+      });
+    }
 
-        document.getElementById('install-btn').addEventListener('click', async () => {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                deferredPrompt = null;
-            }
-        });
+    /* =========================
+       Event Binding
+       ========================= */
 
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js'); });
+    function bindEvents() {
+      // Language toggles
+      DOM.langEs.addEventListener("click", () => setLanguage("es"));
+      DOM.langEn.addEventListener("click", () => setLanguage("en"));
+
+      // Actions
+      DOM.btnClear.addEventListener("click", resetApp);
+      DOM.btnCalcCount.addEventListener("click", analyzeCount);
+      DOM.btnCalcPassage.addEventListener("click", calculatePassage);
+
+      // Enter key on each card
+      DOM.cardCount.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          analyzeCount();
         }
+      });
 
-        // Inicio por defecto
-        setLanguage('es');
-    </script>
+      DOM.cardPassage.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          calculatePassage();
+        }
+      });
+
+      // Soft reset of error styles while typing
+      const countFields = [DOM.inpVivas, DOM.inpMuertas, DOM.inpCuadrantes, DOM.inpDilucion];
+      const passageFields = [DOM.inpC1, DOM.inpV2, DOM.inpC2];
+
+      countFields.forEach((field) => {
+        field.addEventListener("input", () => {
+          setCardValidity(DOM.cardCount, true);
+          DOM.boxResConteo.classList.remove("is-error");
+        });
+      });
+
+      passageFields.forEach((field) => {
+        field.addEventListener("input", () => {
+          setCardValidity(DOM.cardPassage, true);
+          DOM.boxResInoculo.classList.remove("is-error");
+        });
+      });
+    }
+
+    /* =========================
+       App Init
+       ========================= */
+
+    function init() {
+      loadSavedLanguage();
+      applyTranslations(APP.currentLanguage);
+      resetAllOutputs();
+      bindEvents();
+      setupInstallPrompt();
+      registerServiceWorker();
+    }
+
+    init();
+  </script>
 </body>
 </html>
