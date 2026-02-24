@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <link rel="manifest" href="manifest.json">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>CellSplit | Host Cell</title>
@@ -449,6 +450,14 @@
 
         // Init language
         setLanguage('es');
+        // Registro del Service Worker para PWA
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./sw.js')
+                .then(reg => console.log('SW registrado'))
+                .catch(err => console.log('Error SW', err));
+        });
+    }
     </script>
 </body>
 </html>
