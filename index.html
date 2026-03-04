@@ -2,701 +2,857 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-  />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>CellSplit | Host Cell</title>
 
-  <!-- PWA / Mobile -->
-  <meta name="theme-color" content="#050607" />
+  <!-- PWA / mobile -->
+  <meta name="theme-color" content="#f2f2f7" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="CellSplit" />
 
-  <!-- Icons -->
-  <link rel="icon" type="image/png" href="./icon-192.png" />
-  <link rel="apple-touch-icon" href="./icon-192.png" />
   <link rel="manifest" href="./manifest.json" />
+  <link rel="icon" type="image/png" href="./icon-192.png" />
+  <link rel="apple-touch-icon" href="./apple-touch-icon-180.png" />
 
   <style>
-    /* =========================
-       DESIGN TOKENS (CellSplit)
-       MolarPrep-like layout, CellSplit accent
-       ========================= */
+    /* ==========================================
+      HostCell Suite | iOS-like UI (shared with PulseGrowth)
+      - Clean hierarchy
+      - iOS system palette (light + dark)
+    ========================================== */
+
     :root {
-      --bg-main: #050607;
-      --bg-card: #111417;
-      --bg-input: #1b2126;
-      --bg-soft: #0b0f12;
+      --tint: #007aff; /* iOS system blue */
+      --tint-weak: rgba(0, 122, 255, 0.14);
 
-      --accent: #d4ff00;            /* Host Cell green */
-      --accent-strong: #d4ff00;
-      --accent-glow: rgba(212, 255, 0, 0.14);
+      --bg: #f2f2f7; /* iOS grouped background */
+      --bg-elev: #ffffff;
+      --bg-field: rgba(120, 120, 128, 0.12); /* iOS secondary system fill */
 
-      --text-pri: #eef3e6;
-      --text-sec: #a7b394;
-      --text-dim: #74806c;
+      --label: #1c1c1e;
+      --secondary: #6e6e73;
+      --tertiary: #8e8e93;
 
-      --border-color: #2a3324;
-      --border-soft: rgba(212, 255, 0, 0.08);
+      --separator: rgba(60, 60, 67, 0.29);
+      --nav-bg: rgba(242, 242, 247, 0.82);
+      --stroke-1: rgba(60, 60, 67, 0.29);
+      --stroke-2: rgba(60, 60, 67, 0.20);
+      --stroke-3: rgba(60, 60, 67, 0.14);
 
-      --danger: #ef5350;
-      --danger-glow: rgba(239, 83, 80, 0.16);
+      --btn-bg: rgba(255, 255, 255, 0.78);
+      --btn-bg-ghost-hover: rgba(120, 120, 128, 0.12);
 
-      --ok: #4caf50;
-      --ok-glow: rgba(76, 175, 80, 0.18);
+      --danger-bg: rgba(255, 59, 48, 0.12);
+      --warn-bg: rgba(255, 159, 10, 0.12);
+      --ok-bg: rgba(52, 199, 89, 0.12);
 
-      --live-color: #7dff7a;
-      --dead-color: #ff7d7d;
+      --shadow: 0 8px 24px rgba(0,0,0,0.10);
 
-      --radius: 12px;
-      --radius-sm: 8px;
-      --shadow-soft: 0 8px 24px rgba(0, 0, 0, 0.25);
-      --maxw: 1100px;
+      --ok: #34c759;
+      --warn: #ff9f0a;
+      --danger: #ff3b30;
+
+      --radius: 16px;
+      --radius-sm: 12px;
+      --maxw: 900px;
+
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-bot: env(safe-area-inset-bottom, 0px);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #000000;
+        --bg-elev: #1c1c1e;
+        --bg-field: rgba(120, 120, 128, 0.24);
+
+        --label: #ffffff;
+        --secondary: #a1a1a6;
+        --tertiary: #8e8e93;
+
+        --separator: rgba(84, 84, 88, 0.65);
+        --nav-bg: rgba(0, 0, 0, 0.78);
+        --stroke-1: rgba(84, 84, 88, 0.65);
+        --stroke-2: rgba(84, 84, 88, 0.48);
+        --stroke-3: rgba(84, 84, 88, 0.34);
+
+        --btn-bg: rgba(28, 28, 30, 0.72);
+        --btn-bg-ghost-hover: rgba(120, 120, 128, 0.24);
+
+        --danger-bg: rgba(255, 59, 48, 0.18);
+        --warn-bg: rgba(255, 159, 10, 0.18);
+        --ok-bg: rgba(52, 199, 89, 0.18);
+
+        --shadow: 0 10px 30px rgba(0,0,0,0.40);
+
+        --tint-weak: rgba(10, 132, 255, 0.18);
+      }
     }
 
     * { box-sizing: border-box; }
 
-    html, body {
-      margin: 0;
-      padding: 0;
-      min-height: 100%;
-    }
+    html, body { height: 100%; margin: 0; padding: 0; }
 
     body {
-      font-family: "Courier New", Courier, monospace;
-      color: var(--text-pri);
-      background:
-        radial-gradient(circle at 10% 10%, rgba(212, 255, 0, 0.04), transparent 40%),
-        radial-gradient(circle at 90% 20%, rgba(212, 255, 0, 0.03), transparent 35%),
-        linear-gradient(180deg, #050607 0%, #07090b 100%);
-      line-height: 1.4;
-      padding: 20px;
+      background: var(--bg);
+      color: var(--label);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      line-height: 1.35;
+      padding: calc(14px + var(--safe-top)) 14px calc(20px + var(--safe-bot));
     }
 
-    /* Avoid mL / ML typography confusion */
-    .u {
-      font-family: Arial, sans-serif;
-      text-transform: none !important;
+    .container { max-width: var(--maxw); margin: 0 auto; }
+
+    .mono {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-variant-numeric: tabular-nums;
     }
 
-    .container {
-      max-width: var(--maxw);
-      margin: 0 auto;
+    .unit {
+      font-variant-ligatures: none;
+      letter-spacing: 0;
+      text-transform: none;
+      color: var(--secondary);
+      font-weight: 600;
+      font-size: 0.92em;
     }
 
-    /* =========================
-       HEADER
-       ========================= */
-    .header-container {
+    /* Top Nav */
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      padding: 10px 0;
+      margin-bottom: 12px;
+      background: var(--nav-bg);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--stroke-2);
+    }
+
+    .nav-row {
       display: flex;
+      align-items: center;
       justify-content: space-between;
-      align-items: flex-start;
-      gap: 16px;
-      margin: 0 auto 22px auto;
-      padding-bottom: 14px;
-      border-bottom: 2px solid var(--border-color);
+      gap: 12px;
     }
 
     .brand {
       display: flex;
+      gap: 12px;
       align-items: center;
-      gap: 14px;
       min-width: 0;
     }
 
-    .brand-logo {
-      width: 56px;
-      height: 56px;
+    .app-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      border: 1px solid var(--stroke-3);
+      box-shadow: 0 8px 22px rgba(0,0,0,0.12);
+      background: var(--bg-elev);
       object-fit: contain;
-      border-radius: 10px;
-      border: 1px solid rgba(212, 255, 0, 0.2);
-      box-shadow: 0 0 18px rgba(212, 255, 0, 0.18);
-      background: rgba(255, 255, 255, 0.01);
       flex-shrink: 0;
     }
 
-    .header-title {
+    .brand-text { min-width: 0; }
+
+    .app-title {
       margin: 0;
-      color: var(--accent);
-      text-transform: uppercase;
-      font-size: 1.85rem;
-      letter-spacing: 0.03em;
-      text-shadow: 0 0 10px rgba(212, 255, 0, 0.06);
+      font-size: 1.25rem;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      line-height: 1.1;
     }
 
-    .header-subtitle {
-      margin-top: 4px;
-      color: var(--text-sec);
-      font-size: 0.8rem;
-      letter-spacing: 0.09em;
-      text-transform: uppercase;
+    .app-subtitle {
+      margin-top: 3px;
+      color: var(--secondary);
+      font-size: 0.82rem;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
-    .controls {
+    .actions {
       display: flex;
-      flex-direction: column;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .btn {
+      border: 1px solid var(--stroke-2);
+      background: var(--btn-bg);
+      color: var(--label);
+      padding: 9px 12px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 0.86rem;
+      cursor: pointer;
+      transition: transform 0.10s ease, border-color 0.15s ease, background 0.15s ease;
+      text-decoration: none;
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      user-select: none;
+      white-space: nowrap;
+    }
+
+    .btn:active { transform: scale(0.98); }
+
+    .btn-primary {
+      border-color: rgba(0, 122, 255, 0.45);
+      background: var(--tint);
+      color: #fff;
+    }
+
+    .btn-danger {
+      border-color: rgba(255, 59, 48, 0.45);
+      background: var(--danger-bg);
+      color: var(--danger);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      border-color: transparent;
+      padding: 9px 10px;
+    }
+
+    .btn-ghost:hover {
+      background: var(--btn-bg-ghost-hover);
+      border-color: var(--stroke-3);
+    }
+
+    .btn-install[hidden] { display: none !important; }
+
+    .icon { width: 16px; height: 16px; display: inline-block; }
+
+    /* Segmented control (language) */
+    .seg {
+      background: var(--bg-field);
+      border: 1px solid var(--stroke-2);
+      border-radius: 12px;
+      padding: 2px;
+      display: inline-flex;
+      gap: 2px;
+      align-items: stretch;
+    }
+
+    .seg button {
+      border: 0;
+      background: transparent;
+      color: var(--secondary);
+      padding: 8px 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 800;
+      font-size: 0.86rem;
+      letter-spacing: -0.01em;
+      transition: background 0.12s ease, color 0.12s ease;
+      white-space: nowrap;
+    }
+
+    .seg button[aria-selected="true"] {
+      background: var(--bg-elev);
+      color: var(--label);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.10);
+    }
+
+    .seg-small button { padding: 7px 10px; font-size: 0.82rem; }
+
+    /* Module tiles */
+    .tiles {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
       gap: 10px;
-      align-items: flex-end;
+      margin-bottom: 12px;
+    }
+
+    .tile {
+      text-align: left;
+      border: 1px solid var(--stroke-2);
+      border-radius: var(--radius);
+      background: var(--bg-elev);
+      padding: 12px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+      cursor: pointer;
+      transition: transform 0.12s ease, border-color 0.12s ease;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      min-width: 0;
+    }
+
+    .tile:active { transform: scale(0.99); }
+
+    .tile.active {
+      border-color: rgba(0, 122, 255, 0.55);
+      box-shadow: 0 0 0 4px var(--tint-weak);
+    }
+
+    .tile-badge {
+      width: 34px;
+      height: 34px;
+      border-radius: 12px;
+      background: var(--tint-weak);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--tint);
+      font-weight: 900;
       flex-shrink: 0;
     }
 
-    .lang-switch {
-      font-weight: bold;
-      color: var(--text-sec);
-      user-select: none;
+    .tile-title {
+      font-weight: 900;
+      letter-spacing: -0.01em;
+      font-size: 0.96rem;
+      margin: 0;
     }
 
-    .lang-switch button {
-      background: transparent;
-      border: 0;
-      color: inherit;
-      font: inherit;
-      cursor: pointer;
-      padding: 0;
-      text-transform: uppercase;
+    .tile-sub {
+      margin: 2px 0 0;
+      color: var(--secondary);
+      font-size: 0.80rem;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
-    .lang-switch button.active {
-      color: var(--accent);
-      text-shadow: 0 0 8px rgba(212, 255, 0, 0.25);
-    }
+    @media (max-width: 720px) { .tiles { grid-template-columns: 1fr; } }
 
-    .btn-clear,
-    .btn-docs,
-    .btn-action {
-      font-family: inherit;
-      text-transform: uppercase;
-      cursor: pointer;
-      border-radius: var(--radius-sm);
-      transition: 0.2s ease;
-    }
-
-    .btn-clear {
-      background: transparent;
-      color: var(--text-sec);
-      border: 1px solid var(--text-sec);
-      padding: 7px 12px;
-      font-size: 0.8rem;
-    }
-
-    .btn-clear:hover {
-      background: var(--danger);
-      color: #fff;
-      border-color: var(--danger);
-      box-shadow: 0 0 0 3px var(--danger-glow);
-    }
-
-    .btn-docs {
-      background: var(--bg-input);
-      color: var(--accent);
-      border: 1px solid var(--accent);
-      padding: 8px 14px;
-      font-size: 0.85rem;
-      font-weight: bold;
-      text-decoration: none;
-      display: inline-block;
-    }
-
-    .btn-docs:hover {
-      background: var(--accent);
-      color: #000;
-      box-shadow: 0 0 0 3px var(--accent-glow);
-    }
-
-    #install-btn {
-      border-color: var(--accent);
-      color: var(--accent);
-      animation: pulse-green 2s infinite;
-    }
-
-    #install-btn[hidden] {
-      display: none !important;
-    }
-
-    @keyframes pulse-green {
-      0%   { box-shadow: 0 0 0 0 rgba(212, 255, 0, 0.35); }
-      70%  { box-shadow: 0 0 0 8px rgba(212, 255, 0, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(212, 255, 0, 0); }
-    }
-
-    /* =========================
-       GRID + CARDS
-       ========================= */
-    .app-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 22px;
-      margin: 0 auto;
-    }
-
-    @media (min-width: 900px) {
-      .app-grid {
-        grid-template-columns: 1fr 1fr;
-      }
-    }
+    /* Panels + Cards */
+    .panel { display: none; }
+    .panel.active { display: block; }
 
     .card {
-      background:
-        linear-gradient(180deg, rgba(255, 255, 255, 0.01), rgba(255, 255, 255, 0)),
-        var(--bg-card);
-      border: 1px solid var(--border-color);
+      background: var(--bg-elev);
+      border: 1px solid var(--stroke-2);
       border-radius: var(--radius);
-      padding: 22px;
+      box-shadow: var(--shadow);
+      padding: 16px;
+      overflow: hidden;
+    }
+
+    .card.invalid {
+      border-color: rgba(255, 59, 48, 0.62);
+      box-shadow: 0 0 0 4px rgba(255, 59, 48, 0.18);
+    }
+
+    .card-header {
       display: flex;
-      flex-direction: column;
-      box-shadow: inset 0 0 0 1px rgba(212, 255, 0, 0.015);
-      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
     }
 
-    .card.is-invalid {
-      border-color: var(--danger);
-      box-shadow: 0 0 0 3px var(--danger-glow);
+    .card-h {
+      margin: 0;
+      font-size: 1.08rem;
+      font-weight: 900;
+      letter-spacing: -0.01em;
     }
 
-    .card-title {
-      margin: 0 0 10px 0;
-      color: var(--text-pri);
-      font-size: 1rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
+    .card-desc {
+      margin: 6px 0 0;
+      color: var(--secondary);
+      font-weight: 600;
+      font-size: 0.90rem;
     }
 
-    .card-hint {
-      color: var(--text-dim);
-      font-size: 0.75rem;
-      margin: 0 0 14px 0;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: var(--bg-field);
+      border: 1px solid var(--stroke-3);
+      color: var(--secondary);
+      font-weight: 800;
+      font-size: 0.78rem;
+      white-space: nowrap;
     }
 
-    .input-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-    }
+    .pill.ok { color: var(--ok); border-color: rgba(52, 199, 89, 0.45); background: var(--ok-bg); }
+    .pill.warn { color: var(--warn); border-color: rgba(255, 159, 10, 0.45); background: var(--warn-bg); }
 
-    .input-group {
-      margin-bottom: 16px;
+    /* Diagnostic badge (CellSplit) */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--stroke-3);
+      background: var(--bg-field);
+      color: var(--secondary);
+      font-weight: 900;
+      font-size: 0.80rem;
+      white-space: nowrap;
     }
+    .badge.ok { color: var(--ok); border-color: rgba(52,199,89,0.45); background: var(--ok-bg); }
+    .badge.low { color: var(--warn); border-color: rgba(255,159,10,0.45); background: var(--warn-bg); }
+    .badge.high { color: var(--danger); border-color: rgba(255,59,48,0.45); background: var(--danger-bg); }
+
+    .form { display: grid; gap: 12px; }
+
+    .field-group { display: grid; gap: 6px; }
 
     label {
-      display: block;
-      margin-bottom: 6px;
-      color: var(--text-sec);
-      font-size: 0.78rem;
-      font-weight: bold;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: var(--label);
+      letter-spacing: -0.01em;
     }
 
-    .label-live {
-      color: var(--live-color);
+    .hint {
+      color: var(--secondary);
+      font-weight: 600;
+      font-size: 0.82rem;
+      margin-top: -2px;
     }
 
-    .label-dead {
-      color: var(--dead-color);
-    }
-
-    input,
-    select {
+    input, select {
       width: 100%;
+      background: var(--bg-field);
+      border: 1px solid var(--stroke-2);
+      border-radius: 12px;
       padding: 12px;
-      border-radius: var(--radius-sm);
-      border: 1px solid var(--border-color);
-      background: var(--bg-input);
-      color: var(--text-pri);
-      font-family: inherit;
       font-size: 1rem;
+      font-weight: 700;
+      color: var(--label);
       outline: none;
-      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      transition: box-shadow 0.15s ease, border-color 0.15s ease;
     }
 
-    input::placeholder {
-      color: #7e8a77;
+    input::placeholder { color: var(--tertiary); font-weight: 700; }
+
+    input:focus, select:focus {
+      border-color: rgba(0, 122, 255, 0.70);
+      box-shadow: 0 0 0 4px var(--tint-weak);
     }
 
-    input:focus,
-    select:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px var(--accent-glow);
-    }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    @media (max-width: 560px) { .grid-2 { grid-template-columns: 1fr; } }
 
-    .btn-action {
-      width: 100%;
-      margin-top: auto;
-      padding: 14px;
-      background: var(--bg-input);
-      color: var(--accent);
-      border: 1px solid var(--accent);
-      font-weight: bold;
-      font-size: 0.9rem;
-      letter-spacing: 0.03em;
-    }
+    .btn-block { width: 100%; justify-content: center; padding: 12px; font-size: 0.95rem; border-radius: 14px; }
 
-    .btn-action:hover {
-      background: var(--accent);
-      color: #000;
-      box-shadow: 0 0 0 3px var(--accent-glow);
-    }
-
-    /* =========================
-       RESULTS
-       ========================= */
-    .results-box {
-      margin-top: 16px;
-      padding: 14px;
-      border-radius: 10px;
-      border: 1px dashed var(--accent);
-      background: var(--accent-glow);
-      text-align: center;
+    /* Results */
+    .result {
+      margin-top: 14px;
+      border-radius: var(--radius);
+      border: 1px solid var(--stroke-2);
+      background: var(--bg-elev);
+      overflow: hidden;
       display: none;
     }
-
-    .results-box.is-visible {
-      display: block;
+    .result.visible { display: block; }
+    .result.error {
+      border-color: rgba(255, 59, 48, 0.62);
+      box-shadow: 0 0 0 4px rgba(255, 59, 48, 0.18);
     }
 
-    .results-box.is-error {
-      border-color: var(--danger);
-      background: var(--danger-glow);
+    .result-head {
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      border-bottom: 1px solid var(--stroke-3);
+      background: var(--bg-field);
     }
 
-    .results-box.is-error .res-val {
-      color: #ff8a80;
-      text-shadow: none;
+    .result-title {
+      margin: 0;
+      font-weight: 900;
+      letter-spacing: -0.01em;
+      font-size: 0.92rem;
+      color: var(--label);
     }
 
-    .res-label {
-      font-size: 0.78rem;
-      color: var(--text-sec);
-      text-transform: uppercase;
-      margin-bottom: 4px;
-      letter-spacing: 0.04em;
+    .result-list { padding: 0; margin: 0; list-style: none; }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: center;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--stroke-3);
     }
 
-    .res-val {
-      font-size: 1.55rem;
-      font-weight: bold;
-      color: var(--accent);
-      text-shadow: 0 0 10px rgba(212, 255, 0, 0.12);
-      word-break: break-word;
+    .row:last-child { border-bottom: none; }
+
+    .k { color: var(--secondary); font-weight: 800; font-size: 0.86rem; }
+    .v { color: var(--label); font-weight: 900; font-size: 1.02rem; text-align: right; word-break: break-word; }
+
+    @media (max-width: 560px) {
+      .row { grid-template-columns: 1fr; }
+      .v { text-align: left; }
     }
 
-    .status-badge {
-      display: inline-block;
+    /* Bottom sheet (Info) */
+    .sheet-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.35);
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      z-index: 80;
+      padding: 12px;
+    }
+
+    .sheet-backdrop.open { display: flex; }
+
+    .sheet {
+      width: min(720px, 100%);
+      max-height: 80vh;
+      background: var(--bg-elev);
+      border-radius: 18px;
+      border: 1px solid var(--stroke-2);
+      box-shadow: 0 18px 48px rgba(0,0,0,0.35);
+      overflow: hidden;
+      transform: translateY(12px);
+    }
+
+    .sheet-header {
+      padding: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      border-bottom: 1px solid var(--stroke-3);
+      background: var(--bg-field);
+    }
+
+    .sheet-title { margin: 0; font-weight: 900; letter-spacing: -0.01em; font-size: 1.02rem; }
+
+    .sheet-body { padding: 14px; overflow: auto; }
+
+    .section {
+      border: 1px solid var(--stroke-3);
+      border-radius: 14px;
+      background: var(--bg-elev);
+      padding: 12px;
+      margin-bottom: 12px;
+    }
+
+    .section h4 { margin: 0 0 6px 0; font-size: 0.95rem; font-weight: 900; letter-spacing: -0.01em; }
+    .section p { margin: 0; color: var(--secondary); font-weight: 600; line-height: 1.45; font-size: 0.90rem; }
+
+    .formula {
       margin-top: 10px;
-      padding: 6px 10px;
-      font-size: 0.8rem;
-      font-weight: bold;
-      color: #000;
-      border-radius: 999px;
-      background: var(--accent);
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(0, 122, 255, 0.30);
+      background: rgba(0, 122, 255, 0.10);
+      font-weight: 900;
+      text-align: center;
+      color: var(--label);
     }
 
-    .status-badge.status-ok {
-      background: var(--ok);
-      color: #fff;
-    }
-
-    .status-badge.status-low {
-      background: var(--accent);
-      color: #000;
-    }
-
-    .status-badge.status-high {
-      background: var(--danger);
-      color: #fff;
-    }
-
-    .status-badge.status-neutral {
-      background: #616161;
-      color: #fff;
-    }
-
-    .result-divider {
-      margin: 12px 0;
-      border: 0;
-      border-top: 1px solid rgba(212, 255, 0, 0.14);
-    }
-
-    .aux-result {
-      color: var(--text-sec);
-      font-size: 0.82rem;
-      margin-top: 2px;
-    }
-
-    /* =========================
-       FOOTER
-       ========================= */
-    .footer-info {
-      margin: 34px auto 18px auto;
-      padding-top: 18px;
-      border-top: 1px solid var(--border-color);
-    }
-
-    .faq-item {
-      margin-bottom: 24px;
-    }
-
-    .faq-q {
-      color: var(--accent);
-      font-weight: bold;
-      text-transform: uppercase;
+    footer {
+      margin-top: 16px;
+      color: var(--secondary);
       font-size: 0.88rem;
-      margin-bottom: 6px;
-      letter-spacing: 0.03em;
+      font-weight: 600;
+      text-align: center;
     }
 
-    .faq-a {
-      color: var(--text-sec);
-      font-size: 0.84rem;
+    footer strong { color: var(--label); }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; }
+      .sheet { transform: none !important; }
     }
 
-    .author-box {
-      border-left: 3px solid var(--accent);
-      padding-left: 14px;
-      color: var(--text-sec);
-      font-size: 0.82rem;
-    }
-
-    .author-box strong {
-      color: var(--text-pri);
-    }
-
-    /* =========================
-       MOBILE
-       ========================= */
-    @media (max-width: 768px) {
-      body {
-        padding: 14px;
-      }
-
-      .header-container {
-        flex-direction: column;
-        align-items: stretch;
-      }
-
-      .controls {
-        align-items: flex-start;
-      }
-
-      .brand-logo {
-        width: 48px;
-        height: 48px;
-      }
-
-      .header-title {
-        font-size: 1.45rem;
-      }
-    }
   </style>
 </head>
+
 <body>
   <div class="container">
-    <!-- Header -->
-    <header class="header-container">
-      <div class="brand">
-        <img src="./icon-192.png" alt="CellSplit logo" class="brand-logo" />
-        <div>
-          <h1 class="header-title">CellSplit</h1>
-          <div class="header-subtitle">Host Cell Lab Tools</div>
-        </div>
-      </div>
-
-      <div class="controls">
-        <div class="lang-switch" aria-label="Language selector">
-          <button id="lang-es" class="active" type="button">ES</button>
-          <span aria-hidden="true"> | </span>
-          <button id="lang-en" type="button">EN</button>
+    <!-- NAV -->
+    <header class="nav" aria-label="CellSplit navigation">
+      <div class="nav-row">
+        <div class="brand">
+          <img src="./icon-192.png" alt="CellSplit" class="app-icon" />
+          <div class="brand-text">
+            <h1 class="app-title">CellSplit</h1>
+            <div class="app-subtitle" data-i18n="subtitle">Host Cell Lab Suite · Cell splitting &amp; passage planning</div>
+          </div>
         </div>
 
-        <a
-          href="https://github.com/ebalderasr/CellSplit"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="btn-docs"
-          data-i18n="btnDocs"
-          id="btn-docs"
-        >
-          [ Documentación / Repo ]
-        </a>
+        <div class="actions">
+          <button class="btn btn-ghost" id="btn-info" type="button" data-i18n="btnInfo" aria-label="Info">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20Z" stroke="currentColor" stroke-width="2"/>
+              <path d="M12 10v7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M12 7h.01" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+            </svg>
+            <span>Info</span>
+          </button>
 
-        <button class="btn-clear" id="btn-clear" type="button" data-i18n="btnClear">
-          [ Limpiar ]
-        </button>
+          <a class="btn" id="btn-docs" href="https://github.com/ebalderasr/CellSplit" target="_blank" rel="noopener noreferrer" data-i18n="btnDocs">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+              <path d="M14 3v5h5" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+            </svg>
+            <span>[ Repo ]</span>
+          </a>
 
-        <button class="btn-clear" id="install-btn" type="button" hidden data-i18n="btnInstall">
-          [ Instalar App ]
-        </button>
+          <div class="seg seg-small" aria-label="Language selector">
+            <button id="lang-es" class="active" type="button" aria-selected="true">ES</button>
+            <button id="lang-en" type="button" aria-selected="false">EN</button>
+          </div>
+
+          <button class="btn btn-danger" id="btn-clear" type="button" data-i18n="btnClear" aria-label="Clear">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M3 6h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M8 6V4h8v2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M7 6l1 15h8l1-15" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+            </svg>
+            <span>[ Limpiar ]</span>
+          </button>
+
+          <button class="btn btn-primary btn-install" id="install-btn" type="button" hidden data-i18n="btnInstall">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M12 3v10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M8 11l4 4 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M4 20h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <span>[ Instalar ]</span>
+          </button>
+        </div>
       </div>
     </header>
 
-    <!-- Main App -->
-    <main class="app-grid">
-      <!-- Module 1: Cell Count -->
-      <section class="card" id="card-count">
-        <h2 class="card-title" data-i18n="card1Title">01. Conteo de células</h2>
-        <div class="card-hint" data-i18n="card1Hint">
-          Neubauer 0.1 mm · concentración viable (x10⁶ <span class="u">cell/mL</span>)
+    <!-- Module tiles (single navigation; no duplicated bar) -->
+    <div class="tiles" aria-label="Modules overview">
+      <button class="tile active" type="button" id="tile-count" data-module="count" aria-label="Conteo">
+        <div class="tile-badge mono" data-i18n="tile1N">01</div>
+        <div style="min-width:0;">
+          <p class="tile-title" data-i18n="tile1T">Conteo de células</p>
+          <p class="tile-sub">Neubauer · viable conc</p>
         </div>
+      </button>
 
-        <div class="input-grid">
-          <div class="input-group">
-            <label for="inpVivas" class="label-live" data-i18n="lblLive">Vivas</label>
-            <input type="number" id="inpVivas" placeholder="0" min="0" step="1" />
-          </div>
-
-          <div class="input-group">
-            <label for="inpMuertas" class="label-dead" data-i18n="lblDead">Muertas</label>
-            <input type="number" id="inpMuertas" placeholder="0" min="0" step="1" />
-          </div>
+      <button class="tile" type="button" id="tile-passage" data-module="passage" aria-label="Pase">
+        <div class="tile-badge mono" data-i18n="tile2N">02</div>
+        <div style="min-width:0;">
+          <p class="tile-title" data-i18n="tile2T">Pase / Inóculo</p>
+          <p class="tile-sub">C1V1 = C2V2</p>
         </div>
+      </button>
+    </div>
 
-        <div class="input-grid">
-          <div class="input-group">
-            <label for="inpCuadrantes" data-i18n="lblSquares">Cuadrantes</label>
-            <select id="inpCuadrantes">
-              <option value="10">10</option>
-              <option value="5">5</option>
-            </select>
+    <main>
+      <!-- PANEL: Count -->
+      <section class="panel active card" id="card-count" role="region" aria-label="Conteo">
+        <div class="card-header">
+          <div>
+            <h2 class="card-h" data-i18n="card1Title">01. Conteo de células</h2>
+            <p class="card-desc" data-i18n="card1Hint">Neubauer 0.1 mm · concentración viable (x10⁶ <span class="mono">cell/mL</span>)</p>
           </div>
-
-          <div class="input-group">
-            <label for="inpDilucion" data-i18n="lblDilution">Dilución</label>
-            <input type="number" id="inpDilucion" value="2" min="0.0001" step="any" />
+          <div>
+            <span class="pill mono">Count</span>
           </div>
         </div>
 
-        <button class="btn-action" id="btn-calc-count" type="button" data-i18n="btnCalc1">
-          Analizar Conteo
-        </button>
-
-        <div id="boxResConteo" class="results-box" aria-live="polite">
-          <div class="res-label" data-i18n="resViableConc">
-            Concentración Viable (x10⁶ <span class="u">cell/mL</span>)
-          </div>
-          <div class="res-val" id="outConc">---</div>
-
-          <div class="aux-result" id="outViabilityRow">
-            <span data-i18n="resViability">Viabilidad</span>:
-            <strong id="outViability">---</strong>
+        <div class="form" role="form" aria-label="Cell count form">
+          <div class="grid-2">
+            <div class="field-group">
+              <label for="inpVivas" data-i18n="lblLive">Vivas</label>
+              <input type="number" id="inpVivas" placeholder="0" min="0" step="1" inputmode="numeric" />
+            </div>
+            <div class="field-group">
+              <label for="inpMuertas" data-i18n="lblDead">Muertas</label>
+              <input type="number" id="inpMuertas" placeholder="0" min="0" step="1" inputmode="numeric" />
+            </div>
           </div>
 
-          <div id="outStatus" class="status-badge status-neutral" data-i18n="statusDefault">
-            Diagnóstico
+          <div class="grid-2">
+            <div class="field-group">
+              <label for="inpCuadrantes" data-i18n="lblSquares">Cuadrantes</label>
+              <select id="inpCuadrantes">
+                <option value="10">10</option>
+                <option value="5">5</option>
+              </select>
+              <div class="hint">10 squares = 4 corners + 6 center (common)</div>
+            </div>
+            <div class="field-group">
+              <label for="inpDilucion" data-i18n="lblDilution">Dilución</label>
+              <input type="number" id="inpDilucion" value="2" min="0.0001" step="any" inputmode="decimal" />
+              <div class="hint">Ej.: 2 para 1:1 con Trypan Blue</div>
+            </div>
+          </div>
+
+          <button class="btn btn-primary btn-block" id="btn-calc-count" type="button" data-i18n="btnCalc1">Analizar Conteo</button>
+
+          <div class="result" id="boxResConteo" aria-live="polite">
+            <div class="result-head">
+              <p class="result-title" data-i18n="resTitle">Resultados</p>
+              <span class="pill mono">x10⁶ cell/mL</span>
+            </div>
+            <ul class="result-list">
+              <li class="row">
+                <div class="k" data-i18n="resViableConc">Concentración Viable (x10⁶ <span class="mono">cell/mL</span>)</div>
+                <div class="v mono" id="outConc">---</div>
+              </li>
+              <li class="row">
+                <div class="k" data-i18n="resViability">Viabilidad</div>
+                <div class="v mono" id="outViability">---</div>
+              </li>
+              <li class="row">
+                <div class="k" data-i18n="statusDefault">Diagnóstico</div>
+                <div class="v"><span id="outStatus" class="badge" data-i18n="statusDefault">Diagnóstico</span></div>
+              </li>
+            </ul>
           </div>
         </div>
       </section>
 
-      <!-- Module 2: Passage / Inoculum -->
-      <section class="card" id="card-passage">
-        <h2 class="card-title" data-i18n="card2Title">02. Pase</h2>
-        <div class="card-hint" data-i18n="card2Hint">
-          C1V1 = C2V2 · cálculo de inóculo
+      <!-- PANEL: Passage -->
+      <section class="panel card" id="card-passage" role="region" aria-label="Pase">
+        <div class="card-header">
+          <div>
+            <h2 class="card-h" data-i18n="card2Title">02. Pase</h2>
+            <p class="card-desc" data-i18n="card2Hint">C1V1 = C2V2 · cálculo de inóculo</p>
+          </div>
+          <div>
+            <span class="pill mono">Passage</span>
+          </div>
         </div>
 
-        <div class="input-group">
-          <label for="inpC1" data-i18n="lblCurrentC">Conc. Actual (x10⁶ cell/mL)</label>
-          <input
-            type="number"
-            id="inpC1"
-            placeholder="Esperando conteo..."
-            min="0.0001"
-            step="any"
-          />
-        </div>
-
-        <div class="input-grid">
-          <div class="input-group">
-            <label for="inpV2" data-i18n="lblTargetV">Vol. Meta (mL)</label>
-            <input type="number" id="inpV2" value="25" min="0.0001" step="any" />
+        <div class="form" role="form" aria-label="Passage form">
+          <div class="grid-2">
+            <div class="field-group">
+              <label for="inpC1" data-i18n="lblCurrentC">Conc. Actual (x10⁶ <span class="mono">cell/mL</span>)</label>
+              <input type="number" id="inpC1" placeholder="" min="0.0001" step="any" inputmode="decimal" data-i18n-placeholder="placeholderC1" />
+              <div class="hint">Se llena automáticamente al calcular el conteo.</div>
+            </div>
+            <div class="field-group">
+              <label for="inpV2" data-i18n="lblTargetV">Vol. Meta (<span class="mono">mL</span>)</label>
+              <input type="number" id="inpV2" value="25" min="0.0001" step="any" inputmode="decimal" />
+            </div>
           </div>
 
-          <div class="input-group">
+          <div class="field-group">
             <label for="inpC2" data-i18n="lblTargetC">Dens. Meta (x10⁶)</label>
-            <input type="number" id="inpC2" value="0.3" min="0.0001" step="any" />
-          </div>
-        </div>
-
-        <button class="btn-action" id="btn-calc-passage" type="button" data-i18n="btnCalc2">
-          Calcular Pase
-        </button>
-
-        <div id="boxResInoculo" class="results-box" aria-live="polite">
-          <div class="res-label" data-i18n="resInoculum">Volumen Inóculo</div>
-          <div class="res-val">
-            <span id="outV1">---</span> <span class="u">mL</span>
+            <input type="number" id="inpC2" value="0.3" min="0.0001" step="any" inputmode="decimal" />
           </div>
 
-          <hr class="result-divider" />
+          <button class="btn btn-primary btn-block" id="btn-calc-passage" type="button" data-i18n="btnCalc2">Calcular Pase</button>
 
-          <div class="aux-result">
-            <span data-i18n="resFreshMedium">Volumen de medio fresco</span>:
-            <strong><span id="outFreshMedium">---</span> <span class="u">mL</span></strong>
+          <div class="result" id="boxResInoculo" aria-live="polite">
+            <div class="result-head">
+              <p class="result-title" data-i18n="resTitle">Resultados</p>
+              <span class="pill mono">mL</span>
+            </div>
+            <ul class="result-list">
+              <li class="row">
+                <div class="k" data-i18n="resInoculum">Volumen Inóculo</div>
+                <div class="v mono"><span id="outV1">---</span> mL</div>
+              </li>
+              <li class="row">
+                <div class="k" data-i18n="resFreshMedium">Volumen de medio fresco</div>
+                <div class="v mono"><span id="outFreshMedium">---</span> mL</div>
+              </li>
+            </ul>
           </div>
         </div>
       </section>
     </main>
 
-    <!-- Footer -->
-    <footer class="footer-info">
-      <div class="faq-item">
-        <div class="faq-q" data-i18n="faqQ">¿Cómo se calcula la concentración?</div>
-        <div class="faq-a" data-i18n="faqA">
-          Se asume una cámara de Neubauer de 0.1mm de profundidad. La fórmula es:
-          (Células / Cuadrantes) × Dilución × 10,000.
-        </div>
-      </div>
-
-      <div class="author-box">
-        <strong data-i18n="lblAuthor">Autor: Emiliano Balderas</strong><br />
-        <span data-i18n="authorBio">
-          Ingeniero en Biotecnología | Estudiante de Doctorado en Bioquímica, IBt-UNAM
-        </span>
-      </div>
+    <footer>
+      <strong data-i18n="infoAuthor">Autor: Emiliano Balderas</strong><br />
+      <span data-i18n="authorBio">IBt-UNAM · Host Cell Lab Suite</span>
     </footer>
   </div>
 
+  <!-- Info sheet -->
+  <div class="sheet-backdrop" id="sheet-backdrop" role="dialog" aria-modal="true" aria-labelledby="sheet-title" aria-hidden="true">
+    <div class="sheet" role="document" id="info-sheet">
+      <div class="sheet-header">
+        <h3 class="sheet-title" id="sheet-title" data-i18n="infoTitle">Scientific fundamentals</h3>
+        <button class="btn btn-ghost" id="sheet-close" type="button" data-i18n="btnClose">
+          <span>Cerrar</span>
+        </button>
+      </div>
+      <div class="sheet-body">
+        <div class="section">
+          <h4 data-i18n="infoFund">Fundamentos</h4>
+          <p data-i18n="infoFundP">La concentración viable se calcula a partir del conteo en cámara de Neubauer (profundidad 0.1 mm) y el factor de dilución.</p>
+          <div class="formula mono" data-i18n="infoEq1">Viable (x10⁶ cell/mL) = (Vivas / Cuadrantes) × Dilución × 0.01</div>
+          <div class="formula mono" data-i18n="infoEq2">Viabilidad (%) = Vivas / (Vivas + Muertas) × 100</div>
+          <p style="margin-top:10px;" data-i18n="infoTipsP">El diagnóstico es una guía práctica basada en el total de eventos contados: muy bajo (ruido), muy alto (saturación) o óptimo.</p>
+        </div>
+
+        <div class="section">
+          <h4 data-i18n="infoEquip">Pase / Inóculo</h4>
+          <p data-i18n="infoEquipP">Para planear el pase se asume mezcla ideal: C1V1 = C2V2. La app calcula V1 (inóculo) y el volumen de medio fresco requerido.</p>
+          <div class="formula mono" data-i18n="infoEq3">V1 = (C2 × V2) / C1</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
+
     /**
      * ============================
      * CellSplit Front-End Script
+     * (logic preserved; UI adapted to HostCell iOS style)
      * ============================
-     * Goals:
-     * - MolarPrep-style readability and structure
-     * - Separate UI helpers from calculation logic
-     * - Keep formulas explicit and easy to edit
      */
 
     const APP = {
       defaultLanguage: "es",
       currentLanguage: "es",
       deferredInstallPrompt: null,
+      currentModule: "count",
     };
 
     const I18N = {
       es: {
-        btnDocs: "[ Documentación / Repo ]",
+        btnDocs: "[ Repo ]",
         btnClear: "[ Limpiar ]",
-        btnInstall: "[ Instalar App ]",
+        btnInstall: "[ Instalar ]",
+
+
+        btnInfo: "Info",
+        btnClose: "Cerrar",
+        subtitle: "Host Cell Lab Suite · Cell splitting & passage planning",
+        resTitle: "Resultados",
+        tabCount: "01. Conteo",
+        tabPassage: "02. Pase",
+        tile1N: "01",
+        tile1T: "Conteo de células",
+        tile2N: "02",
+        tile2T: "Pase / Inóculo",
 
         card1Title: "01. Conteo de células",
-        card1Hint: 'Neubauer 0.1 mm · concentración viable (x10⁶ <span class="u">cell/mL</span>)',
+        card1Hint: 'Neubauer 0.1 mm · concentración viable (x10⁶ <span class="mono">cell/mL</span>)',
         lblLive: "Vivas",
         lblDead: "Muertas",
         lblSquares: "Cuadrantes",
         lblDilution: "Dilución",
         btnCalc1: "Analizar Conteo",
-        resViableConc: 'Concentración Viable (x10⁶ <span class="u">cell/mL</span>)',
+        resViableConc: 'Concentración Viable (x10⁶ <span class="mono">cell/mL</span>)',
         resViability: "Viabilidad",
         statusDefault: "Diagnóstico",
 
         card2Title: "02. Pase",
         card2Hint: "C1V1 = C2V2 · cálculo de inóculo",
-        lblCurrentC: 'Conc. Actual (x10⁶ <span class="u">cell/mL</span>)',
-        lblTargetV: 'Vol. Meta (<span class="u">mL</span>)',
+        lblCurrentC: 'Conc. Actual (x10⁶ <span class="mono">cell/mL</span>)',
+        lblTargetV: 'Vol. Meta (<span class="mono">mL</span>)',
         lblTargetC: "Dens. Meta (x10⁶)",
         btnCalc2: "Calcular Pase",
         resInoculum: "Volumen Inóculo",
@@ -705,40 +861,56 @@
         placeholderC1: "Esperando conteo...",
 
         err: "ERR",
-        errCells: "Ingresa células válidas.",
-        errPassage: "Verifica C1, V2 y C2.",
-        errPassageRange: "C1 debe ser mayor que C2.",
-
         statLow: "⚠️ Conteo bajo",
         statHigh: "⚠️ Conteo alto",
         statOpt: "✔️ Rango óptimo",
 
-        faqQ: "¿Cómo se calcula la concentración?",
-        faqA: "Se asume una cámara de Neubauer de 0.1mm de profundidad. La fórmula es: (Células / Cuadrantes) × Dilución × 10,000.",
-        lblAuthor: "Autor: Emiliano Balderas",
+        infoTitle: "Info científica",
+        infoFund: "Fundamentos",
+        infoFundP: "CellSplit automatiza conteo en cámara de Neubauer y cálculo de pase (C1V1 = C2V2). Está optimizado para flujo de trabajo rápido en cabina.",
+        infoEq1: "<span class=\"mono\">cell/mL = (Live / Squares) × Dilution × 10,000</span>",
+        infoEq2: "<span class=\"mono\">Viability (%) = Live / (Live + Dead) × 100</span>",
+        infoEq3: "<span class=\"mono\">V1 = (C2 × V2) / C1</span>",
+        infoEquip: "Equipo",
+        infoEquipP: "Se asume cámara Neubauer estándar con 0.1 mm de profundidad y el factor 10,000 proviene del volumen de un cuadrado grande (10⁻⁴ mL).",
+        infoTips: "Tips",
+        infoTipsP: "El diagnóstico del conteo te ayuda a mantener el rango estadístico (p.ej., 100–500 células en 10 cuadrados) sin saturar la interfaz.",
+        infoAuthor: "Autor",
         authorBio: "Ingeniero en Biotecnología | Estudiante de Doctorado en Bioquímica, IBt-UNAM",
       },
 
       en: {
-        btnDocs: "[ Docs / Repo ]",
+        btnDocs: "[ Repo ]",
         btnClear: "[ Clear ]",
-        btnInstall: "[ Install App ]",
+        btnInstall: "[ Install ]",
+
+
+        btnInfo: "Info",
+        btnClose: "Close",
+        subtitle: "Host Cell Lab Suite · Cell splitting & passage planning",
+        resTitle: "Results",
+        tabCount: "01. Count",
+        tabPassage: "02. Passage",
+        tile1N: "01",
+        tile1T: "Cell count",
+        tile2N: "02",
+        tile2T: "Passage / Inoculum",
 
         card1Title: "01. Cell Count",
-        card1Hint: 'Neubauer 0.1 mm · viable concentration (x10⁶ <span class="u">cell/mL</span>)',
+        card1Hint: 'Neubauer 0.1 mm · viable concentration (x10⁶ <span class="mono">cell/mL</span>)',
         lblLive: "Live",
         lblDead: "Dead",
         lblSquares: "Squares",
         lblDilution: "Dilution",
         btnCalc1: "Analyze Count",
-        resViableConc: 'Viable Conc. (x10⁶ <span class="u">cell/mL</span>)',
+        resViableConc: 'Viable Conc. (x10⁶ <span class="mono">cell/mL</span>)',
         resViability: "Viability",
         statusDefault: "Diagnostic",
 
         card2Title: "02. Passage",
         card2Hint: "C1V1 = C2V2 · inoculum calculation",
-        lblCurrentC: 'Current Conc. (x10⁶ <span class="u">cell/mL</span>)',
-        lblTargetV: 'Target Vol. (<span class="u">mL</span>)',
+        lblCurrentC: 'Current Conc. (x10⁶ <span class="mono">cell/mL</span>)',
+        lblTargetV: 'Target Vol. (<span class="mono">mL</span>)',
         lblTargetC: "Target Dens. (x10⁶)",
         btnCalc2: "Calculate Passage",
         resInoculum: "Inoculum Volume",
@@ -747,33 +919,46 @@
         placeholderC1: "Waiting for count...",
 
         err: "ERR",
-        errCells: "Please enter valid cell counts.",
-        errPassage: "Please check C1, V2 and C2.",
-        errPassageRange: "C1 must be greater than C2.",
-
         statLow: "⚠️ Low count",
         statHigh: "⚠️ High count",
         statOpt: "✔️ Optimal range",
 
-        faqQ: "How is concentration calculated?",
-        faqA: "A Neubauer chamber with 0.1mm depth is assumed. The formula is: (Cells / Squares) × Dilution × 10,000.",
-        lblAuthor: "Author: Emiliano Balderas",
+        infoTitle: "Scientific info",
+        infoFund: "Fundamentals",
+        infoFundP: "CellSplit automates Neubauer counting and passaging math (C1V1 = C2V2). Optimized for fast workflows in the hood.",
+        infoEq1: "<span class=\"mono\">cell/mL = (Live / Squares) × Dilution × 10,000</span>",
+        infoEq2: "<span class=\"mono\">Viability (%) = Live / (Live + Dead) × 100</span>",
+        infoEq3: "<span class=\"mono\">V1 = (C2 × V2) / C1</span>",
+        infoEquip: "Equipment",
+        infoEquipP: "Assumes a standard Neubauer chamber with 0.1 mm depth; the 10,000 factor comes from the volume of one large square (10⁻⁴ mL).",
+        infoTips: "Tips",
+        infoTipsP: "The count diagnostic helps you stay in a good statistical range (e.g., 100–500 cells across 10 squares) without cluttering the UI.",
+        infoAuthor: "Author",
         authorBio: "Biotechnology Engineer | PhD Student in Biochemistry, IBt-UNAM",
       },
     };
 
     /**
      * DOM map
-     * Centralized so the script is easier to maintain.
      */
     const DOM = {
       // language
       langEs: document.getElementById("lang-es"),
       langEn: document.getElementById("lang-en"),
 
+      // navigation
+      tileCount: document.getElementById("tile-count"),
+      tilePassage: document.getElementById("tile-passage"),
+
       // top controls
       btnClear: document.getElementById("btn-clear"),
       btnInstall: document.getElementById("install-btn"),
+      btnInfo: document.getElementById("btn-info"),
+
+      // sheet
+      sheetBackdrop: document.getElementById("sheet-backdrop"),
+      sheet: document.getElementById("info-sheet"),
+      sheetClose: document.getElementById("sheet-close"),
 
       // cards
       cardCount: document.getElementById("card-count"),
@@ -836,44 +1021,88 @@
     }
 
     function showResultBox(box, { isError = false } = {}) {
-      box.classList.add("is-visible");
-      box.classList.toggle("is-error", isError);
+      box.classList.add("visible");
+      box.classList.toggle("error", isError);
     }
 
     function hideResultBox(box) {
-      box.classList.remove("is-visible", "is-error");
+      box.classList.remove("visible", "error");
     }
 
     function setCardValidity(cardElement, isValid) {
-      cardElement.classList.toggle("is-invalid", !isValid);
+      cardElement.classList.toggle("invalid", !isValid);
     }
 
     function resetStatusBadge() {
-      DOM.outStatus.className = "status-badge status-neutral";
+      DOM.outStatus.className = "badge";
       DOM.outStatus.textContent = t("statusDefault");
     }
 
     function setStatusBadge(statusType) {
-      DOM.outStatus.className = "status-badge";
+      DOM.outStatus.className = "badge";
 
       if (statusType === "low") {
-        DOM.outStatus.classList.add("status-low");
+        DOM.outStatus.classList.add("low");
         DOM.outStatus.textContent = t("statLow");
         return;
       }
 
       if (statusType === "high") {
-        DOM.outStatus.classList.add("status-high");
+        DOM.outStatus.classList.add("high");
         DOM.outStatus.textContent = t("statHigh");
         return;
       }
 
-      DOM.outStatus.classList.add("status-ok");
+      DOM.outStatus.classList.add("ok");
       DOM.outStatus.textContent = t("statOpt");
     }
 
     /* =========================
-       UI State / Reset
+       Module UI
+       ========================= */
+    function showModule(moduleKey) {
+      APP.currentModule = moduleKey;
+
+      const isCount = moduleKey === "count";
+
+      // panels (cards)
+      DOM.cardCount.classList.toggle("active", isCount);
+      DOM.cardPassage.classList.toggle("active", !isCount);
+
+      // tiles
+      DOM.tileCount.classList.toggle("active", isCount);
+      DOM.tilePassage.classList.toggle("active", !isCount);
+
+      try {
+        localStorage.setItem("cellsplit_module", moduleKey);
+      } catch (_) { /* no-op */ }
+
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function loadSavedModule() {
+      try {
+        const saved = localStorage.getItem("cellsplit_module");
+        if (saved === "count" || saved === "passage") return saved;
+      } catch (_) { /* no-op */ }
+      return "count";
+    }
+
+    /* =========================
+       Info sheet
+       ========================= */
+    function openSheet() {
+      DOM.sheetBackdrop.classList.add("open");
+      DOM.sheetBackdrop.setAttribute("aria-hidden", "false");
+    }
+
+    function closeSheet() {
+      DOM.sheetBackdrop.classList.remove("open");
+      DOM.sheetBackdrop.setAttribute("aria-hidden", "true");
+    }
+
+    /* =========================
+       Reset
        ========================= */
 
     function resetCountOutputs() {
@@ -911,17 +1140,16 @@
     function resetApp() {
       resetInputs();
       resetAllOutputs();
+      showModule("count");
     }
 
     /* =========================
        Module 1: Cell Count
        =========================
-       Formula (Neubauer 0.1 mm):
-       concentration (cells/mL) = (cells counted / squares) * dilution * 10,000
-
-       We report in x10^6 cells/mL, so:
-       concentration (x10^6 cells/mL) = ((cells counted / squares) * dilution * 10,000) / 1,000,000
-                                       = (cells counted / squares) * dilution * 0.01
+       Neubauer 0.1mm:
+       cell/mL = (cells/squares) * dilution * 10,000
+       report in x10^6 cells/mL:
+       x10^6 cell/mL = (cells/squares) * dilution * 0.01
      */
     function analyzeCount() {
       const live = parseInteger(DOM.inpVivas);
@@ -946,7 +1174,6 @@
       }
 
       const total = live + dead;
-
       if (total <= 0) {
         DOM.outConc.textContent = t("err");
         DOM.outViability.textContent = t("err");
@@ -955,26 +1182,18 @@
         return;
       }
 
-      // Viable concentration in x10^6 cells/mL
-      const viableConc = (live / squares) * dilution * 0.01;
-
-      // Viability percentage
+      const viableConc = (live / squares) * dilution * 0.01; // x10^6 cells/mL
       const viabilityPct = (live / total) * 100;
 
       DOM.outConc.textContent = formatFixed(viableConc, 2);
       DOM.outViability.textContent = `${formatFixed(viabilityPct, 1)}%`;
 
-      // Diagnostic based on total counted cells and selected square count
       const minTotal = squares === 10 ? 100 : 50;
       const maxTotal = squares === 10 ? 500 : 250;
 
-      if (total < minTotal) {
-        setStatusBadge("low");
-      } else if (total > maxTotal) {
-        setStatusBadge("high");
-      } else {
-        setStatusBadge("ok");
-      }
+      if (total < minTotal) setStatusBadge("low");
+      else if (total > maxTotal) setStatusBadge("high");
+      else setStatusBadge("ok");
 
       // Auto-transfer concentration to module 2
       DOM.inpC1.value = viableConc.toFixed(2);
@@ -985,18 +1204,14 @@
     /* =========================
        Module 2: Passage / Inoculum
        =========================
-       C1V1 = C2V2  => V1 = (C2 * V2) / C1
+       C1V1 = C2V2 => V1 = (C2*V2)/C1
      */
     function calculatePassage() {
-      const c1 = parseNumber(DOM.inpC1); // current concentration (x10^6 cells/mL)
-      const v2 = parseNumber(DOM.inpV2); // target final volume (mL)
-      const c2 = parseNumber(DOM.inpC2); // target density (x10^6 cells/mL)
+      const c1 = parseNumber(DOM.inpC1);
+      const v2 = parseNumber(DOM.inpV2);
+      const c2 = parseNumber(DOM.inpC2);
 
-      const basicInputsValid =
-        isFinitePositive(c1) &&
-        isFinitePositive(v2) &&
-        isFinitePositive(c2);
-
+      const basicInputsValid = isFinitePositive(c1) && isFinitePositive(v2) && isFinitePositive(c2);
       setCardValidity(DOM.cardPassage, basicInputsValid);
 
       if (!basicInputsValid) {
@@ -1007,8 +1222,6 @@
       }
 
       if (c1 <= c2) {
-        // Biologically / operationally, current concentration must exceed target density
-        // to compute a meaningful dilution/inoculum volume.
         DOM.outV1.textContent = t("err");
         DOM.outFreshMedium.textContent = t("err");
         setCardValidity(DOM.cardPassage, false);
@@ -1016,8 +1229,8 @@
         return;
       }
 
-      const v1 = (c2 * v2) / c1;          // inoculum volume (mL)
-      const freshMedium = v2 - v1;        // medium to add (mL)
+      const v1 = (c2 * v2) / c1;
+      const freshMedium = v2 - v1;
 
       DOM.outV1.textContent = formatFixed(v1, 3);
       DOM.outFreshMedium.textContent = formatFixed(freshMedium, 3);
@@ -1028,7 +1241,6 @@
     /* =========================
        Internationalization (i18n)
        ========================= */
-
     function applyTranslations(language) {
       const pack = I18N[language] || I18N[APP.defaultLanguage];
 
@@ -1037,40 +1249,38 @@
         if (pack[key]) node.innerHTML = pack[key];
       });
 
+      document.querySelectorAll("[data-i18n-placeholder]").forEach((node) => {
+        const key = node.getAttribute("data-i18n-placeholder");
+        if (pack[key]) node.setAttribute("placeholder", pack[key]);
+      });
+
       DOM.langEs.classList.toggle("active", language === "es");
       DOM.langEn.classList.toggle("active", language === "en");
+      DOM.langEs.setAttribute("aria-selected", String(language === "es"));
+      DOM.langEn.setAttribute("aria-selected", String(language === "en"));
 
+      // Module 2 placeholder
       DOM.inpC1.placeholder = pack.placeholderC1 || "";
     }
 
     function setLanguage(language) {
       if (!I18N[language]) return;
-
       APP.currentLanguage = language;
       applyTranslations(language);
 
-      try {
-        localStorage.setItem("cellsplit_lang", language);
-      } catch (_) {
-        /* no-op */
-      }
+      try { localStorage.setItem("cellsplit_lang", language); } catch (_) { /* no-op */ }
     }
 
     function loadSavedLanguage() {
       try {
         const saved = localStorage.getItem("cellsplit_lang");
-        if (saved && I18N[saved]) {
-          APP.currentLanguage = saved;
-        }
-      } catch (_) {
-        /* no-op */
-      }
+        if (saved && I18N[saved]) APP.currentLanguage = saved;
+      } catch (_) { /* no-op */ }
     }
 
     /* =========================
        PWA Install + Service Worker
        ========================= */
-
     function setupInstallPrompt() {
       window.addEventListener("beforeinstallprompt", (event) => {
         event.preventDefault();
@@ -1080,7 +1290,6 @@
 
       DOM.btnInstall.addEventListener("click", async () => {
         if (!APP.deferredInstallPrompt) return;
-
         APP.deferredInstallPrompt.prompt();
         APP.deferredInstallPrompt = null;
         DOM.btnInstall.hidden = true;
@@ -1089,7 +1298,6 @@
 
     function registerServiceWorker() {
       if (!("serviceWorker" in navigator)) return;
-
       window.addEventListener("load", () => {
         navigator.serviceWorker.register("./sw.js").catch((error) => {
           console.warn("SW registration failed:", error);
@@ -1100,47 +1308,51 @@
     /* =========================
        Event Binding
        ========================= */
-
     function bindEvents() {
       // Language toggles
       DOM.langEs.addEventListener("click", () => setLanguage("es"));
       DOM.langEn.addEventListener("click", () => setLanguage("en"));
 
+      // Module switch (tiles only)
+      const moduleButtons = [DOM.tileCount, DOM.tilePassage].filter(Boolean);
+      moduleButtons.forEach((btn) => {
+        btn.addEventListener("click", () => showModule(btn.dataset.module));
+      });
+
       // Actions
       DOM.btnClear.addEventListener("click", resetApp);
-      DOM.btnCalcCount.addEventListener("click", analyzeCount);
-      DOM.btnCalcPassage.addEventListener("click", calculatePassage);
+      DOM.btnCalcCount.addEventListener("click", () => { analyzeCount(); });
+      DOM.btnCalcPassage.addEventListener("click", () => { calculatePassage(); });
 
-      // Enter key on each card
+      // Enter key inside cards
       DOM.cardCount.addEventListener("keydown", (event) => {
-        if (event.key === "Enter") {
-          event.preventDefault();
-          analyzeCount();
-        }
+        if (event.key === "Enter") { event.preventDefault(); analyzeCount(); }
       });
-
       DOM.cardPassage.addEventListener("keydown", (event) => {
-        if (event.key === "Enter") {
-          event.preventDefault();
-          calculatePassage();
-        }
+        if (event.key === "Enter") { event.preventDefault(); calculatePassage(); }
       });
 
-      // Soft reset of error styles while typing
+      // Sheet
+      DOM.btnInfo.addEventListener("click", openSheet);
+      DOM.sheetClose.addEventListener("click", closeSheet);
+      DOM.sheetBackdrop.addEventListener("click", (e) => { if (e.target === DOM.sheetBackdrop) closeSheet(); });
+      window.addEventListener("keydown", (e) => { if (e.key === "Escape") closeSheet(); });
+
+      // Soft reset error styles while typing
       const countFields = [DOM.inpVivas, DOM.inpMuertas, DOM.inpCuadrantes, DOM.inpDilucion];
       const passageFields = [DOM.inpC1, DOM.inpV2, DOM.inpC2];
 
       countFields.forEach((field) => {
         field.addEventListener("input", () => {
           setCardValidity(DOM.cardCount, true);
-          DOM.boxResConteo.classList.remove("is-error");
+          DOM.boxResConteo.classList.remove("error");
         });
       });
 
       passageFields.forEach((field) => {
         field.addEventListener("input", () => {
           setCardValidity(DOM.cardPassage, true);
-          DOM.boxResInoculo.classList.remove("is-error");
+          DOM.boxResInoculo.classList.remove("error");
         });
       });
     }
@@ -1148,7 +1360,6 @@
     /* =========================
        App Init
        ========================= */
-
     function init() {
       loadSavedLanguage();
       applyTranslations(APP.currentLanguage);
@@ -1156,9 +1367,13 @@
       bindEvents();
       setupInstallPrompt();
       registerServiceWorker();
+
+      // Restore last module (optional)
+      showModule(loadSavedModule());
     }
 
     init();
+  
   </script>
 </body>
 </html>
