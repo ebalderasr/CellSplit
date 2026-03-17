@@ -6,7 +6,8 @@
   <title>CellSplit | Host Cell</title>
 
   <!-- PWA / mobile -->
-  <meta name="theme-color" content="#f2f2f7" />
+  <meta name="theme-color" content="#f2f2f7" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="CellSplit" />
@@ -17,45 +18,57 @@
 
   <style>
     /* ==========================================
-      HostCell Suite | iOS-like UI (shared with PulseGrowth)
-      - Clean hierarchy
-      - iOS system palette (light + dark)
+      CellSplit | iOS 26 — Liquid Glass Design
+      - Glassmorphism con backdrop-filter real
+      - Pill shapes, formas suaves
+      - Gradiente de fondo para profundidad
+      - Light + Dark mode
     ========================================== */
 
     :root {
-      --tint: #007aff; /* iOS system blue */
-      --tint-weak: rgba(0, 122, 255, 0.14);
+      --tint: #007aff;
+      --tint-weak: rgba(0, 122, 255, 0.15);
+      --tint-glass: rgba(0, 122, 255, 0.08);
 
-      --bg: #f2f2f7; /* iOS grouped background */
-      --bg-elev: #ffffff;
-      --bg-field: rgba(120, 120, 128, 0.12); /* iOS secondary system fill */
+      --bg: #f2f2f7;
+      --bg-elev: rgba(255, 255, 255, 0.76);
+      --bg-glass: rgba(255, 255, 255, 0.60);
+      --bg-field: rgba(118, 118, 128, 0.10);
 
       --label: #1c1c1e;
       --secondary: #6e6e73;
-      --tertiary: #8e8e93;
+      --tertiary: #aeaeb2;
 
-      --separator: rgba(60, 60, 67, 0.29);
-      --nav-bg: rgba(242, 242, 247, 0.82);
-      --stroke-1: rgba(60, 60, 67, 0.29);
-      --stroke-2: rgba(60, 60, 67, 0.20);
-      --stroke-3: rgba(60, 60, 67, 0.14);
+      --glass-border: rgba(255, 255, 255, 0.65);
+      --separator: rgba(60, 60, 67, 0.18);
+      --stroke-1: rgba(60, 60, 67, 0.20);
+      --stroke-2: rgba(60, 60, 67, 0.13);
+      --stroke-3: rgba(60, 60, 67, 0.09);
 
-      --btn-bg: rgba(255, 255, 255, 0.78);
-      --btn-bg-ghost-hover: rgba(120, 120, 128, 0.12);
+      --nav-bg: rgba(242, 242, 247, 0.86);
+      --btn-bg: rgba(255, 255, 255, 0.88);
+      --btn-bg-ghost-hover: rgba(118, 118, 128, 0.10);
 
-      --danger-bg: rgba(255, 59, 48, 0.12);
-      --warn-bg: rgba(255, 159, 10, 0.12);
-      --ok-bg: rgba(52, 199, 89, 0.12);
-
-      --shadow: 0 8px 24px rgba(0,0,0,0.10);
-
-      --ok: #34c759;
+      --ok: #30d158;
       --warn: #ff9f0a;
-      --danger: #ff3b30;
+      --danger: #ff453a;
+      --danger-bg: rgba(255, 69, 58, 0.12);
+      --warn-bg: rgba(255, 159, 10, 0.12);
+      --ok-bg: rgba(48, 209, 88, 0.12);
 
-      --radius: 16px;
-      --radius-sm: 12px;
+      --shadow-xs: 0 1px 4px rgba(0,0,0,0.06);
+      --shadow-sm: 0 4px 16px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.05);
+      --shadow: 0 8px 32px rgba(0,0,0,0.10), 0 2px 8px rgba(0,0,0,0.06);
+      --shadow-lg: 0 24px 72px rgba(0,0,0,0.14), 0 8px 24px rgba(0,0,0,0.08);
+
+      --radius: 22px;
+      --radius-sm: 16px;
+      --radius-xs: 11px;
       --maxw: 900px;
+
+      --blur-sm: blur(18px) saturate(160%);
+      --blur: blur(32px) saturate(180%);
+      --blur-heavy: blur(52px) saturate(210%);
 
       --safe-top: env(safe-area-inset-top, 0px);
       --safe-bot: env(safe-area-inset-bottom, 0px);
@@ -64,34 +77,37 @@
     @media (prefers-color-scheme: dark) {
       :root {
         --bg: #000000;
-        --bg-elev: #1c1c1e;
-        --bg-field: rgba(120, 120, 128, 0.24);
+        --bg-elev: rgba(28, 28, 30, 0.88);
+        --bg-glass: rgba(28, 28, 30, 0.74);
+        --bg-field: rgba(118, 118, 128, 0.22);
 
         --label: #ffffff;
-        --secondary: #a1a1a6;
-        --tertiary: #8e8e93;
+        --secondary: #98989f;
+        --tertiary: #6d6d72;
 
-        --separator: rgba(84, 84, 88, 0.65);
-        --nav-bg: rgba(0, 0, 0, 0.78);
-        --stroke-1: rgba(84, 84, 88, 0.65);
-        --stroke-2: rgba(84, 84, 88, 0.48);
-        --stroke-3: rgba(84, 84, 88, 0.34);
+        --glass-border: rgba(255, 255, 255, 0.11);
+        --separator: rgba(84, 84, 88, 0.50);
+        --stroke-1: rgba(84, 84, 88, 0.46);
+        --stroke-2: rgba(84, 84, 88, 0.32);
+        --stroke-3: rgba(84, 84, 88, 0.22);
 
-        --btn-bg: rgba(28, 28, 30, 0.72);
-        --btn-bg-ghost-hover: rgba(120, 120, 128, 0.24);
+        --nav-bg: rgba(0, 0, 0, 0.86);
+        --btn-bg: rgba(44, 44, 46, 0.92);
+        --btn-bg-ghost-hover: rgba(118, 118, 128, 0.22);
 
-        --danger-bg: rgba(255, 59, 48, 0.18);
+        --danger-bg: rgba(255, 69, 58, 0.18);
         --warn-bg: rgba(255, 159, 10, 0.18);
-        --ok-bg: rgba(52, 199, 89, 0.18);
+        --ok-bg: rgba(48, 209, 88, 0.18);
 
-        --shadow: 0 10px 30px rgba(0,0,0,0.40);
+        --shadow: 0 8px 32px rgba(0,0,0,0.58), 0 2px 8px rgba(0,0,0,0.36);
+        --shadow-lg: 0 24px 72px rgba(0,0,0,0.72), 0 8px 24px rgba(0,0,0,0.48);
 
         --tint-weak: rgba(10, 132, 255, 0.18);
+        --tint-glass: rgba(10, 132, 255, 0.10);
       }
     }
 
     * { box-sizing: border-box; }
-
     html, body { height: 100%; margin: 0; padding: 0; }
 
     body {
@@ -99,8 +115,28 @@
       color: var(--label);
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       -webkit-font-smoothing: antialiased;
-      line-height: 1.35;
-      padding: calc(14px + var(--safe-top)) 14px calc(20px + var(--safe-bot));
+      line-height: 1.38;
+      padding: calc(12px + var(--safe-top)) 16px calc(28px + var(--safe-bot));
+    }
+
+    /* Mesh gradient — da profundidad real al glass */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background:
+        radial-gradient(ellipse 80% 55% at 15% -5%, rgba(0, 122, 255, 0.10) 0%, transparent 65%),
+        radial-gradient(ellipse 55% 50% at 88% 105%, rgba(88, 86, 214, 0.09) 0%, transparent 65%);
+      pointer-events: none;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      body::before {
+        background:
+          radial-gradient(ellipse 80% 55% at 15% -5%, rgba(10, 132, 255, 0.14) 0%, transparent 65%),
+          radial-gradient(ellipse 55% 50% at 88% 105%, rgba(94, 92, 230, 0.12) 0%, transparent 65%);
+      }
     }
 
     .container { max-width: var(--maxw); margin: 0 auto; }
@@ -111,25 +147,22 @@
     }
 
     .unit {
-      font-variant-ligatures: none;
-      letter-spacing: 0;
-      text-transform: none;
       color: var(--secondary);
       font-weight: 600;
       font-size: 0.92em;
     }
 
-    /* Top Nav */
+    /* ── Nav ── */
     .nav {
       position: sticky;
       top: 0;
       z-index: 50;
-      padding: 10px 0;
-      margin-bottom: 12px;
+      padding: 12px 0;
+      margin-bottom: 16px;
       background: var(--nav-bg);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      border-bottom: 1px solid var(--stroke-2);
+      backdrop-filter: var(--blur);
+      -webkit-backdrop-filter: var(--blur);
+      border-bottom: 1px solid var(--separator);
     }
 
     .nav-row {
@@ -151,8 +184,7 @@
       height: 44px;
       border-radius: 12px;
       border: 1px solid var(--stroke-3);
-      box-shadow: 0 8px 22px rgba(0,0,0,0.12);
-      background: var(--bg-elev);
+      box-shadow: var(--shadow-sm);
       object-fit: contain;
       flex-shrink: 0;
     }
@@ -163,15 +195,15 @@
       margin: 0;
       font-size: 1.25rem;
       font-weight: 800;
-      letter-spacing: -0.01em;
+      letter-spacing: -0.02em;
       line-height: 1.1;
     }
 
     .app-subtitle {
-      margin-top: 3px;
+      margin-top: 2px;
       color: var(--secondary);
-      font-size: 0.82rem;
-      font-weight: 600;
+      font-size: 0.79rem;
+      font-weight: 500;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -179,65 +211,78 @@
 
     .actions {
       display: flex;
-      gap: 8px;
+      gap: 6px;
       align-items: center;
       flex-wrap: wrap;
       justify-content: flex-end;
     }
 
+    /* ── Buttons ── */
     .btn {
-      border: 1px solid var(--stroke-2);
+      border: 1px solid var(--glass-border);
       background: var(--btn-bg);
+      backdrop-filter: var(--blur-sm);
+      -webkit-backdrop-filter: var(--blur-sm);
       color: var(--label);
-      padding: 9px 12px;
-      border-radius: 12px;
-      font-weight: 700;
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-weight: 600;
       font-size: 0.86rem;
       cursor: pointer;
-      transition: transform 0.10s ease, border-color 0.15s ease, background 0.15s ease;
+      transition: transform 0.10s ease, opacity 0.14s ease, box-shadow 0.14s ease;
       text-decoration: none;
       display: inline-flex;
-      gap: 8px;
+      gap: 6px;
       align-items: center;
       user-select: none;
       white-space: nowrap;
+      box-shadow: var(--shadow-xs);
     }
 
-    .btn:active { transform: scale(0.98); }
+    .btn:active { transform: scale(0.96); opacity: 0.86; }
 
     .btn-primary {
-      border-color: rgba(0, 122, 255, 0.45);
       background: var(--tint);
+      border-color: transparent;
       color: #fff;
+      box-shadow: 0 4px 18px rgba(0, 122, 255, 0.40), 0 1px 4px rgba(0, 122, 255, 0.22);
+      font-weight: 700;
+    }
+
+    .btn-primary:active {
+      transform: scale(0.97);
+      box-shadow: 0 2px 8px rgba(0, 122, 255, 0.28);
     }
 
     .btn-danger {
-      border-color: rgba(255, 59, 48, 0.45);
       background: var(--danger-bg);
+      border-color: rgba(255, 69, 58, 0.28);
       color: var(--danger);
+      backdrop-filter: none;
     }
 
     .btn-ghost {
       background: transparent;
       border-color: transparent;
-      padding: 9px 10px;
+      box-shadow: none;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+      color: var(--tint);
+      font-weight: 600;
     }
 
-    .btn-ghost:hover {
-      background: var(--btn-bg-ghost-hover);
-      border-color: var(--stroke-3);
-    }
+    .btn-ghost:hover { background: var(--btn-bg-ghost-hover); }
 
     .btn-install[hidden] { display: none !important; }
 
     .icon { width: 16px; height: 16px; display: inline-block; }
 
-    /* Segmented control (language) */
+    /* ── Segmented control ── */
     .seg {
       background: var(--bg-field);
       border: 1px solid var(--stroke-2);
-      border-radius: 12px;
-      padding: 2px;
+      border-radius: 999px;
+      padding: 3px;
       display: inline-flex;
       gap: 2px;
       align-items: stretch;
@@ -247,220 +292,326 @@
       border: 0;
       background: transparent;
       color: var(--secondary);
-      padding: 8px 12px;
-      border-radius: 10px;
+      padding: 6px 12px;
+      border-radius: 999px;
       cursor: pointer;
-      font-weight: 800;
-      font-size: 0.86rem;
-      letter-spacing: -0.01em;
-      transition: background 0.12s ease, color 0.12s ease;
+      font-weight: 700;
+      font-size: 0.83rem;
+      transition: background 0.12s ease, color 0.12s ease, box-shadow 0.12s ease;
       white-space: nowrap;
     }
 
     .seg button[aria-selected="true"] {
       background: var(--bg-elev);
       color: var(--label);
-      box-shadow: 0 6px 16px rgba(0,0,0,0.10);
+      box-shadow: var(--shadow-sm);
     }
 
-    .seg-small button { padding: 7px 10px; font-size: 0.82rem; }
+    .seg-small button { padding: 5px 10px; font-size: 0.79rem; }
 
-    /* Module tiles */
+    /* ── Module tiles — tab bar style ── */
     .tiles {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
-      margin-bottom: 12px;
+      gap: 4px;
+      margin-bottom: 16px;
+      background: var(--bg-field);
+      border: 1px solid var(--stroke-2);
+      border-radius: 18px;
+      padding: 4px;
     }
 
     .tile {
-      text-align: left;
-      border: 1px solid var(--stroke-2);
-      border-radius: var(--radius);
-      background: var(--bg-elev);
-      padding: 12px;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+      text-align: center;
+      border: 1px solid transparent;
+      border-radius: 14px;
+      background: transparent;
+      padding: 11px 10px;
       cursor: pointer;
-      transition: transform 0.12s ease, border-color 0.12s ease;
+      transition: background 0.14s ease, box-shadow 0.14s ease, border-color 0.14s ease;
       display: flex;
-      gap: 10px;
+      flex-direction: column;
+      gap: 5px;
       align-items: center;
+      justify-content: center;
       min-width: 0;
     }
 
-    .tile:active { transform: scale(0.99); }
+    .tile:active { transform: scale(0.98); }
 
     .tile.active {
-      border-color: rgba(0, 122, 255, 0.55);
-      box-shadow: 0 0 0 4px var(--tint-weak);
+      background: var(--bg-elev);
+      backdrop-filter: var(--blur-sm);
+      -webkit-backdrop-filter: var(--blur-sm);
+      border-color: var(--glass-border);
+      box-shadow: var(--shadow-sm);
     }
 
     .tile-badge {
-      width: 34px;
-      height: 34px;
-      border-radius: 12px;
-      background: var(--tint-weak);
+      width: 30px;
+      height: 30px;
+      border-radius: 999px;
+      background: var(--bg-field);
+      border: 1px solid var(--stroke-2);
       display: flex;
       align-items: center;
       justify-content: center;
-      color: var(--tint);
-      font-weight: 900;
+      color: var(--secondary);
+      font-weight: 800;
+      font-size: 0.78rem;
       flex-shrink: 0;
+      transition: background 0.14s ease, color 0.14s ease, border-color 0.14s ease;
+    }
+
+    .tile.active .tile-badge {
+      background: var(--tint);
+      color: #fff;
+      border-color: transparent;
+      box-shadow: 0 2px 8px rgba(0, 122, 255, 0.32);
     }
 
     .tile-title {
-      font-weight: 900;
+      font-weight: 700;
       letter-spacing: -0.01em;
-      font-size: 0.96rem;
+      font-size: 0.90rem;
       margin: 0;
+      color: var(--secondary);
+      transition: color 0.14s ease;
     }
 
+    .tile.active .tile-title { color: var(--label); font-weight: 800; }
+
     .tile-sub {
-      margin: 2px 0 0;
-      color: var(--secondary);
-      font-size: 0.80rem;
-      font-weight: 600;
+      margin: 0;
+      color: var(--tertiary);
+      font-size: 0.73rem;
+      font-weight: 500;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
 
-    @media (max-width: 720px) { .tiles { grid-template-columns: 1fr; } }
-
-    /* Panels + Cards */
+    /* ── Panels + Cards ── */
     .panel { display: none; }
     .panel.active { display: block; }
 
     .card {
       background: var(--bg-elev);
-      border: 1px solid var(--stroke-2);
+      backdrop-filter: var(--blur);
+      -webkit-backdrop-filter: var(--blur);
+      border: 1px solid var(--glass-border);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
-      padding: 16px;
+      padding: 20px;
       overflow: hidden;
     }
 
     .card.invalid {
-      border-color: rgba(255, 59, 48, 0.62);
-      box-shadow: 0 0 0 4px rgba(255, 59, 48, 0.18);
+      border-color: rgba(255, 69, 58, 0.52);
+      box-shadow: 0 0 0 4px rgba(255, 69, 58, 0.12), var(--shadow);
     }
 
     .card-header {
       display: flex;
-      align-items: baseline;
+      align-items: flex-start;
       justify-content: space-between;
       gap: 12px;
-      margin-bottom: 12px;
+      margin-bottom: 18px;
     }
 
     .card-h {
       margin: 0;
-      font-size: 1.08rem;
-      font-weight: 900;
-      letter-spacing: -0.01em;
+      font-size: 1.10rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
     }
 
     .card-desc {
-      margin: 6px 0 0;
+      margin: 5px 0 0;
       color: var(--secondary);
-      font-weight: 600;
-      font-size: 0.90rem;
+      font-weight: 500;
+      font-size: 0.88rem;
     }
 
     .pill {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      padding: 6px 10px;
+      gap: 5px;
+      padding: 5px 10px;
       border-radius: 999px;
       background: var(--bg-field);
-      border: 1px solid var(--stroke-3);
+      border: 1px solid var(--stroke-2);
       color: var(--secondary);
-      font-weight: 800;
-      font-size: 0.78rem;
+      font-weight: 700;
+      font-size: 0.76rem;
       white-space: nowrap;
     }
 
-    .pill.ok { color: var(--ok); border-color: rgba(52, 199, 89, 0.45); background: var(--ok-bg); }
-    .pill.warn { color: var(--warn); border-color: rgba(255, 159, 10, 0.45); background: var(--warn-bg); }
+    .pill.ok  { color: var(--ok);   border-color: rgba(48, 209, 88, 0.38);  background: var(--ok-bg); }
+    .pill.warn{ color: var(--warn); border-color: rgba(255, 159, 10, 0.38); background: var(--warn-bg); }
 
-    /* Diagnostic badge (CellSplit) */
+    /* ── Badge ── */
     .badge {
       display: inline-flex;
       align-items: center;
-      padding: 6px 10px;
+      padding: 5px 11px;
       border-radius: 999px;
+      border: 1px solid var(--stroke-2);
+      background: var(--bg-field);
+      color: var(--secondary);
+      font-weight: 700;
+      font-size: 0.78rem;
+      white-space: nowrap;
+    }
+    .badge.ok  { color: var(--ok);     border-color: rgba(48,209,88,0.38);  background: var(--ok-bg); }
+    .badge.low { color: var(--warn);   border-color: rgba(255,159,10,0.38); background: var(--warn-bg); }
+    .badge.high{ color: var(--danger); border-color: rgba(255,69,58,0.38);  background: var(--danger-bg); }
+
+    /* ── Picker chips ── */
+    .picker {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .picker-opt {
+      flex: 1 0 44px;
+      border: 1px solid var(--stroke-1);
+      background: var(--bg-field);
+      color: var(--secondary);
+      padding: 9px 10px;
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: 0.88rem;
+      cursor: pointer;
+      transition: background 0.12s ease, color 0.12s ease, border-color 0.12s ease, box-shadow 0.12s ease, transform 0.10s ease;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .picker-opt:active { transform: scale(0.95); }
+
+    .picker-opt.active {
+      background: var(--tint);
+      border-color: transparent;
+      color: #fff;
+      font-weight: 700;
+      box-shadow: 0 3px 12px rgba(0, 122, 255, 0.36);
+    }
+
+    .picker-custom { margin-top: 8px; }
+    .picker-custom[hidden] { display: none; }
+
+    /* ── Info toggle ── */
+    .info-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: none;
+      color: var(--tint);
+      cursor: pointer;
+      padding: 2px;
+      margin-left: 4px;
+      vertical-align: middle;
+      opacity: 0.85;
+      transition: opacity 0.12s ease, transform 0.12s ease;
+      border-radius: 50%;
+    }
+
+    .info-btn:hover { opacity: 1; transform: scale(1.12); }
+    .info-btn:active { transform: scale(0.90); }
+
+    .neubauer-detail {
+      margin-top: 10px;
+      padding: 12px 14px;
+      border-radius: var(--radius-sm);
       border: 1px solid var(--stroke-3);
       background: var(--bg-field);
       color: var(--secondary);
-      font-weight: 900;
-      font-size: 0.80rem;
-      white-space: nowrap;
+      font-size: 0.83rem;
+      font-weight: 500;
+      line-height: 1.62;
     }
-    .badge.ok { color: var(--ok); border-color: rgba(52,199,89,0.45); background: var(--ok-bg); }
-    .badge.low { color: var(--warn); border-color: rgba(255,159,10,0.45); background: var(--warn-bg); }
-    .badge.high { color: var(--danger); border-color: rgba(255,59,48,0.45); background: var(--danger-bg); }
 
-    .form { display: grid; gap: 12px; }
+    .neubauer-detail[hidden] { display: none; }
 
-    .field-group { display: grid; gap: 6px; }
+    /* ── Form ── */
+    .form { display: grid; gap: 14px; }
+    .field-group { display: grid; gap: 8px; }
 
     label {
-      font-size: 0.85rem;
-      font-weight: 800;
+      font-size: 0.84rem;
+      font-weight: 700;
       color: var(--label);
       letter-spacing: -0.01em;
     }
 
     .hint {
-      color: var(--secondary);
-      font-weight: 600;
-      font-size: 0.82rem;
-      margin-top: -2px;
+      color: var(--tertiary);
+      font-weight: 500;
+      font-size: 0.79rem;
+      margin-top: -3px;
     }
 
     input, select {
       width: 100%;
       background: var(--bg-field);
-      border: 1px solid var(--stroke-2);
-      border-radius: 12px;
-      padding: 12px;
+      border: 1px solid var(--stroke-1);
+      border-radius: var(--radius-sm);
+      padding: 13px 14px;
       font-size: 1rem;
-      font-weight: 700;
+      font-weight: 600;
       color: var(--label);
       outline: none;
-      transition: box-shadow 0.15s ease, border-color 0.15s ease;
+      transition: box-shadow 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+      -webkit-appearance: none;
+      appearance: none;
     }
 
-    input::placeholder { color: var(--tertiary); font-weight: 700; }
+    input::placeholder { color: var(--tertiary); font-weight: 500; }
 
     input:focus, select:focus {
-      border-color: rgba(0, 122, 255, 0.70);
-      box-shadow: 0 0 0 4px var(--tint-weak);
+      border-color: rgba(0, 122, 255, 0.62);
+      box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.12);
+      background: rgba(0, 122, 255, 0.04);
     }
 
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     @media (max-width: 560px) { .grid-2 { grid-template-columns: 1fr; } }
 
-    .btn-block { width: 100%; justify-content: center; padding: 12px; font-size: 0.95rem; border-radius: 14px; }
+    .btn-block {
+      width: 100%;
+      justify-content: center;
+      padding: 15px;
+      font-size: 1.02rem;
+      border-radius: 999px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
 
-    /* Results */
+    /* ── Results ── */
     .result {
-      margin-top: 14px;
-      border-radius: var(--radius);
-      border: 1px solid var(--stroke-2);
-      background: var(--bg-elev);
+      margin-top: 16px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--glass-border);
+      background: var(--bg-glass);
+      backdrop-filter: var(--blur-sm);
+      -webkit-backdrop-filter: var(--blur-sm);
       overflow: hidden;
       display: none;
+      box-shadow: var(--shadow-sm);
     }
+
     .result.visible { display: block; }
+
     .result.error {
-      border-color: rgba(255, 59, 48, 0.62);
-      box-shadow: 0 0 0 4px rgba(255, 59, 48, 0.18);
+      border-color: rgba(255, 69, 58, 0.48);
+      box-shadow: 0 0 0 4px rgba(255, 69, 58, 0.12);
     }
 
     .result-head {
-      padding: 12px 14px;
+      padding: 12px 16px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -471,9 +622,9 @@
 
     .result-title {
       margin: 0;
-      font-weight: 900;
+      font-weight: 800;
       letter-spacing: -0.01em;
-      font-size: 0.92rem;
+      font-size: 0.90rem;
       color: var(--label);
     }
 
@@ -484,25 +635,27 @@
       grid-template-columns: 1fr auto;
       gap: 12px;
       align-items: center;
-      padding: 12px 14px;
+      padding: 13px 16px;
       border-bottom: 1px solid var(--stroke-3);
     }
 
     .row:last-child { border-bottom: none; }
 
-    .k { color: var(--secondary); font-weight: 800; font-size: 0.86rem; }
-    .v { color: var(--label); font-weight: 900; font-size: 1.02rem; text-align: right; word-break: break-word; }
+    .k { color: var(--secondary); font-weight: 600; font-size: 0.86rem; }
+    .v { color: var(--label); font-weight: 700; font-size: 1.05rem; text-align: right; word-break: break-word; }
 
     @media (max-width: 560px) {
       .row { grid-template-columns: 1fr; }
       .v { text-align: left; }
     }
 
-    /* Bottom sheet (Info) */
+    /* ── Bottom Sheet ── */
     .sheet-backdrop {
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.35);
+      background: rgba(0,0,0,0.38);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
       display: none;
       align-items: flex-end;
       justify-content: center;
@@ -514,64 +667,74 @@
 
     .sheet {
       width: min(720px, 100%);
-      max-height: 80vh;
+      max-height: 84vh;
       background: var(--bg-elev);
-      border-radius: 18px;
-      border: 1px solid var(--stroke-2);
-      box-shadow: 0 18px 48px rgba(0,0,0,0.35);
+      backdrop-filter: var(--blur-heavy);
+      -webkit-backdrop-filter: var(--blur-heavy);
+      border-radius: 26px;
+      border: 1px solid var(--glass-border);
+      box-shadow: var(--shadow-lg);
       overflow: hidden;
-      transform: translateY(12px);
+    }
+
+    .sheet-handle {
+      width: 36px;
+      height: 4px;
+      background: var(--stroke-1);
+      border-radius: 2px;
+      margin: 10px auto 0;
     }
 
     .sheet-header {
-      padding: 14px;
+      padding: 14px 18px 14px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 12px;
       border-bottom: 1px solid var(--stroke-3);
-      background: var(--bg-field);
     }
 
-    .sheet-title { margin: 0; font-weight: 900; letter-spacing: -0.01em; font-size: 1.02rem; }
+    .sheet-title { margin: 0; font-weight: 800; letter-spacing: -0.02em; font-size: 1.05rem; }
 
-    .sheet-body { padding: 14px; overflow: auto; }
+    .sheet-body { padding: 16px; overflow: auto; }
 
     .section {
-      border: 1px solid var(--stroke-3);
-      border-radius: 14px;
-      background: var(--bg-elev);
-      padding: 12px;
-      margin-bottom: 12px;
+      border: 1px solid var(--stroke-2);
+      border-radius: var(--radius-sm);
+      background: var(--bg-field);
+      padding: 14px;
+      margin-bottom: 10px;
     }
 
-    .section h4 { margin: 0 0 6px 0; font-size: 0.95rem; font-weight: 900; letter-spacing: -0.01em; }
-    .section p { margin: 0; color: var(--secondary); font-weight: 600; line-height: 1.45; font-size: 0.90rem; }
+    .section:last-child { margin-bottom: 0; }
+    .section h4 { margin: 0 0 6px 0; font-size: 0.95rem; font-weight: 800; letter-spacing: -0.01em; }
+    .section p { margin: 0; color: var(--secondary); font-weight: 500; line-height: 1.52; font-size: 0.88rem; }
 
     .formula {
       margin-top: 10px;
-      padding: 10px 12px;
-      border-radius: 12px;
-      border: 1px solid rgba(0, 122, 255, 0.30);
-      background: rgba(0, 122, 255, 0.10);
-      font-weight: 900;
+      padding: 11px 14px;
+      border-radius: var(--radius-xs);
+      border: 1px solid rgba(0, 122, 255, 0.24);
+      background: rgba(0, 122, 255, 0.08);
+      font-weight: 700;
       text-align: center;
       color: var(--label);
     }
 
+    /* ── Footer ── */
     footer {
-      margin-top: 16px;
-      color: var(--secondary);
-      font-size: 0.88rem;
-      font-weight: 600;
+      margin-top: 20px;
+      color: var(--tertiary);
+      font-size: 0.83rem;
+      font-weight: 500;
       text-align: center;
+      padding-bottom: 8px;
     }
 
-    footer strong { color: var(--label); }
+    footer strong { color: var(--secondary); }
 
     @media (prefers-reduced-motion: reduce) {
       * { transition: none !important; }
-      .sheet { transform: none !important; }
     }
 
   </style>
@@ -605,7 +768,7 @@
               <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
               <path d="M14 3v5h5" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
             </svg>
-            <span>[ Repo ]</span>
+            <span>Repo</span>
           </a>
 
           <div class="seg seg-small" aria-label="Language selector">
@@ -619,7 +782,7 @@
               <path d="M8 6V4h8v2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
               <path d="M7 6l1 15h8l1-15" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
             </svg>
-            <span>[ Limpiar ]</span>
+            <span>Limpiar</span>
           </button>
 
           <button class="btn btn-primary btn-install" id="install-btn" type="button" hidden data-i18n="btnInstall">
@@ -628,7 +791,7 @@
               <path d="M8 11l4 4 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
               <path d="M4 20h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
             </svg>
-            <span>[ Instalar ]</span>
+            <span>Instalar</span>
           </button>
         </div>
       </div>
@@ -659,7 +822,19 @@
         <div class="card-header">
           <div>
             <h2 class="card-h" data-i18n="card1Title">01. Conteo de células</h2>
-            <p class="card-desc" data-i18n="card1Hint">Neubauer 0.1 mm · concentración viable (x10⁶ <span class="mono">cell/mL</span>)</p>
+            <p class="card-desc">
+              <span data-i18n="card1Hint">Neubauer 0.1 mm · concentración viable (x10⁶ <span class="mono">cell/mL</span>)</span>
+              <button class="info-btn" id="btn-neubauer-info" type="button" aria-label="Neubauer chamber info" aria-expanded="false">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2.2"/>
+                  <path d="M12 10.5v6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+                  <circle cx="12" cy="7" r="1.3" fill="currentColor"/>
+                </svg>
+              </button>
+            </p>
+            <div class="neubauer-detail" id="neubauer-detail" hidden>
+              <p data-i18n="neubauerDetail">9 cuadrantes grandes de 1 mm² cada uno. Los 4 cuadrantes de las esquinas (marcados "L" para leucocitos) están subdivididos en 16 cuadros de 0.25 mm de lado. El cuadrante central grande también está subdividido en 16 cuadros de 0.25 mm de lado; cada uno agrupa 16 mini cuadros de 0.05 mm de lado (área 0.0025 mm²). Los 5 cuadros de grupo del cuadrante central se usan para contar trombocitos y eritrocitos.</p>
+            </div>
           </div>
           <div>
             <span class="pill mono">Count</span>
@@ -680,17 +855,28 @@
 
           <div class="grid-2">
             <div class="field-group">
-              <label for="inpCuadrantes" data-i18n="lblSquares">Cuadrantes</label>
-              <select id="inpCuadrantes">
-                <option value="10">10</option>
-                <option value="5">5</option>
-              </select>
-              <div class="hint">10 squares = 4 corners + 6 center (common)</div>
+              <label data-i18n="lblSquares">Cuadrantes</label>
+              <div class="picker" id="pickerCuadrantes">
+                <button class="picker-opt active" type="button" data-value="10">10</button>
+                <button class="picker-opt" type="button" data-value="5">5</button>
+                <button class="picker-opt" type="button" data-value="custom" data-i18n="lblCustom">Otro</button>
+              </div>
+              <input type="number" id="inpCuadrantesCustom" class="picker-custom" hidden min="1" max="10" step="1" inputmode="numeric" placeholder="1 – 10" />
+              <input type="hidden" id="inpCuadrantes" value="10" />
+              <div class="hint" data-i18n="hintSquares">10 = 8 esquinas + 2 centrales (común)</div>
             </div>
             <div class="field-group">
-              <label for="inpDilucion" data-i18n="lblDilution">Dilución</label>
-              <input type="number" id="inpDilucion" value="2" min="0.0001" step="any" inputmode="decimal" />
-              <div class="hint">Ej.: 2 para 1:1 con Trypan Blue</div>
+              <label data-i18n="lblDilution">Dilución</label>
+              <div class="picker" id="pickerDilucion">
+                <button class="picker-opt active" type="button" data-value="2">2</button>
+                <button class="picker-opt" type="button" data-value="5">5</button>
+                <button class="picker-opt" type="button" data-value="10">10</button>
+                <button class="picker-opt" type="button" data-value="20">20</button>
+                <button class="picker-opt" type="button" data-value="40">40</button>
+                <button class="picker-opt" type="button" data-value="custom" data-i18n="lblCustom">Otro</button>
+              </div>
+              <input type="number" id="inpDilucion" class="picker-custom" hidden value="2" min="1" max="200" step="1" inputmode="numeric" placeholder="1 – 200" />
+              <div class="hint" data-i18n="hintDilution">Ej.: 2 para 1:1 con Azul de Tripano</div>
             </div>
           </div>
 
@@ -739,13 +925,19 @@
               <div class="hint">Se llena automáticamente al calcular el conteo.</div>
             </div>
             <div class="field-group">
-              <label for="inpV2" data-i18n="lblTargetV">Vol. Meta (<span class="mono">mL</span>)</label>
-              <input type="number" id="inpV2" value="25" min="0.0001" step="any" inputmode="decimal" />
+              <label data-i18n="lblTargetV">Vol. Meta (<span class="mono">mL</span>)</label>
+              <div class="picker" id="pickerV2">
+                <button class="picker-opt" type="button" data-value="10">10</button>
+                <button class="picker-opt active" type="button" data-value="25">25</button>
+                <button class="picker-opt" type="button" data-value="50">50</button>
+                <button class="picker-opt" type="button" data-value="custom" data-i18n="lblCustom">Otro</button>
+              </div>
+              <input type="number" id="inpV2" class="picker-custom" hidden value="25" min="1" max="10000000" step="any" inputmode="decimal" placeholder="0 – 10,000,000" />
             </div>
           </div>
 
           <div class="field-group">
-            <label for="inpC2" data-i18n="lblTargetC">Dens. Meta (x10⁶)</label>
+            <label for="inpC2" data-i18n="lblTargetC">Conc. Meta (x10⁶)</label>
             <input type="number" id="inpC2" value="0.3" min="0.0001" step="any" inputmode="decimal" />
           </div>
 
@@ -780,6 +972,7 @@
   <!-- Info sheet -->
   <div class="sheet-backdrop" id="sheet-backdrop" role="dialog" aria-modal="true" aria-labelledby="sheet-title" aria-hidden="true">
     <div class="sheet" role="document" id="info-sheet">
+      <div class="sheet-handle" aria-hidden="true"></div>
       <div class="sheet-header">
         <h3 class="sheet-title" id="sheet-title" data-i18n="infoTitle">Scientific fundamentals</h3>
         <button class="btn btn-ghost" id="sheet-close" type="button" data-i18n="btnClose">
@@ -822,10 +1015,9 @@
 
     const I18N = {
       es: {
-        btnDocs: "[ Repo ]",
-        btnClear: "[ Limpiar ]",
-        btnInstall: "[ Instalar ]",
-
+        btnDocs: "Repo",
+        btnClear: "Limpiar",
+        btnInstall: "Instalar",
 
         btnInfo: "Info",
         btnClose: "Cerrar",
@@ -838,22 +1030,26 @@
         tile2N: "02",
         tile2T: "Pase / Inóculo",
 
-        card1Title: "01. Conteo de células",
-        card1Hint: 'Neubauer 0.1 mm · concentración viable (x10⁶ <span class="mono">cell/mL</span>)',
+        card1Title: "Conteo de células",
+        card1Hint: 'Considera una cámara Neubauer con profundidad de 0.1 mm',
+        neubauerDetail: 'Los cálculos consideran una Cámara Neubauer estándar con 9 cuadrantes grandes de 1 mm² cada uno. Los 4 cuadrantes de las esquinas (marcados "L" para leucocitos) están subdivididos en 16 cuadros de 0.25 mm de lado. El cuadrante central grande también está subdividido en 16 cuadros de 0.25 mm de lado; cada uno agrupa 16 mini cuadros de 0.05 mm de lado (área 0.0025 mm²). Los 5 cuadros de grupo del cuadrante central se usan para contar trombocitos y eritrocitos.',
         lblLive: "Vivas",
         lblDead: "Muertas",
         lblSquares: "Cuadrantes",
+        lblCustom: "Otro",
+        hintSquares: "10 = 8 esquinas + 2 centrales (más común)",
         lblDilution: "Dilución",
+        hintDilution: "Ej.: 2 para 1:1 con Azul de Tripano",
         btnCalc1: "Analizar Conteo",
-        resViableConc: 'Concentración Viable (x10⁶ <span class="mono">cell/mL</span>)',
+        resViableConc: 'Concentración Celular Viable (x10⁶ <span class="mono">cell/mL</span>)',
         resViability: "Viabilidad",
         statusDefault: "Diagnóstico",
 
-        card2Title: "02. Pase",
+        card2Title: "Pase",
         card2Hint: "C1V1 = C2V2 · cálculo de inóculo",
-        lblCurrentC: 'Conc. Actual (x10⁶ <span class="mono">cell/mL</span>)',
+        lblCurrentC: 'Conc. Celular Actual (x10⁶ <span class="mono">cell/mL</span>)',
         lblTargetV: 'Vol. Meta (<span class="mono">mL</span>)',
-        lblTargetC: "Dens. Meta (x10⁶)",
+        lblTargetC: "Conc. Celular Meta (x10⁶)",
         btnCalc2: "Calcular Pase",
         resInoculum: "Volumen Inóculo",
         resFreshMedium: "Volumen de medio fresco",
@@ -868,22 +1064,21 @@
         infoTitle: "Info científica",
         infoFund: "Fundamentos",
         infoFundP: "CellSplit automatiza conteo en cámara de Neubauer y cálculo de pase (C1V1 = C2V2). Está optimizado para flujo de trabajo rápido en cabina.",
-        infoEq1: "<span class=\"mono\">cell/mL = (Live / Squares) × Dilution × 10,000</span>",
-        infoEq2: "<span class=\"mono\">Viability (%) = Live / (Live + Dead) × 100</span>",
+        infoEq1: "<span class=\"mono\">cell/mL = (Vivas / Cuadrantes) × Dilución × 10,000</span>",
+        infoEq2: "<span class=\"mono\">Viabilidad (%) = Vivas / (Vivas + Muertas) × 100</span>",
         infoEq3: "<span class=\"mono\">V1 = (C2 × V2) / C1</span>",
         infoEquip: "Equipo",
         infoEquipP: "Se asume cámara Neubauer estándar con 0.1 mm de profundidad y el factor 10,000 proviene del volumen de un cuadrado grande (10⁻⁴ mL).",
         infoTips: "Tips",
-        infoTipsP: "El diagnóstico del conteo te ayuda a mantener el rango estadístico (p.ej., 100–500 células en 10 cuadrados) sin saturar la interfaz.",
-        infoAuthor: "Autor",
+        infoTipsP: "El diagnóstico del conteo ayuda a mantener el rango estadístico óptimo (~10–50 células por cuadrante) sin saturar la interfaz.",
+        infoAuthor: "Autor: Emiliano Balderas Ramírez",
         authorBio: "Ingeniero en Biotecnología | Estudiante de Doctorado en Bioquímica, IBt-UNAM",
       },
 
       en: {
-        btnDocs: "[ Repo ]",
-        btnClear: "[ Clear ]",
-        btnInstall: "[ Install ]",
-
+        btnDocs: "Repo",
+        btnClear: "Clear",
+        btnInstall: "Install",
 
         btnInfo: "Info",
         btnClose: "Close",
@@ -896,22 +1091,26 @@
         tile2N: "02",
         tile2T: "Passage / Inoculum",
 
-        card1Title: "01. Cell Count",
-        card1Hint: 'Neubauer 0.1 mm · viable concentration (x10⁶ <span class="mono">cell/mL</span>)',
+        card1Title: "Cell Count",
+        card1Hint: 'Neubauer chamber with a depth of 0.1 mm',
+        neubauerDetail: 'The calculations assume a standard Neubauer chamber with nine large quadrants of 1 mm² each. The four corner quadrants (marked "L" for leukocytes) are subdivided into 16 squares of 0.25 mm sides. The large central quadrant is also subdivided into 16 squares of 0.25 mm sides; each of these groups 16 mini-squares of 0.05 mm sides (area 0.0025 mm²). The five group squares in the central quadrant are used for counting platelets and erythrocytes.',
         lblLive: "Live",
         lblDead: "Dead",
         lblSquares: "Squares",
+        lblCustom: "Other",
+        hintSquares: "10 = 8 corners + 2 center (most common)",
         lblDilution: "Dilution",
+        hintDilution: "e.g., 2 for 1:1 with Trypan Blue",
         btnCalc1: "Analyze Count",
-        resViableConc: 'Viable Conc. (x10⁶ <span class="mono">cell/mL</span>)',
+        resViableConc: 'Viable Cell Density (x10⁶ <span class="mono">cell/mL</span>)',
         resViability: "Viability",
         statusDefault: "Diagnostic",
 
-        card2Title: "02. Passage",
+        card2Title: "Passage",
         card2Hint: "C1V1 = C2V2 · inoculum calculation",
-        lblCurrentC: 'Current Conc. (x10⁶ <span class="mono">cell/mL</span>)',
+        lblCurrentC: 'Current Cell Density (x10⁶ <span class="mono">cell/mL</span>)',
         lblTargetV: 'Target Vol. (<span class="mono">mL</span>)',
-        lblTargetC: "Target Dens. (x10⁶)",
+        lblTargetC: "Target Density (x10⁶)",
         btnCalc2: "Calculate Passage",
         resInoculum: "Inoculum Volume",
         resFreshMedium: "Fresh medium volume",
@@ -932,8 +1131,8 @@
         infoEquip: "Equipment",
         infoEquipP: "Assumes a standard Neubauer chamber with 0.1 mm depth; the 10,000 factor comes from the volume of one large square (10⁻⁴ mL).",
         infoTips: "Tips",
-        infoTipsP: "The count diagnostic helps you stay in a good statistical range (e.g., 100–500 cells across 10 squares) without cluttering the UI.",
-        infoAuthor: "Author",
+        infoTipsP: "The count diagnostic helps you stay in a good statistical range (~10–50 cells per square) without cluttering the UI.",
+        infoAuthor: "Author: Emiliano Balderas Ramírez",
         authorBio: "Biotechnology Engineer | PhD Student in Biochemistry, IBt-UNAM",
       },
     };
@@ -968,8 +1167,11 @@
       inpVivas: document.getElementById("inpVivas"),
       inpMuertas: document.getElementById("inpMuertas"),
       inpCuadrantes: document.getElementById("inpCuadrantes"),
+      inpCuadrantesCustom: document.getElementById("inpCuadrantesCustom"),
       inpDilucion: document.getElementById("inpDilucion"),
       btnCalcCount: document.getElementById("btn-calc-count"),
+      btnNeubauerInfo: document.getElementById("btn-neubauer-info"),
+      neubauerDetail: document.getElementById("neubauer-detail"),
 
       // module 1 outputs
       boxResConteo: document.getElementById("boxResConteo"),
@@ -1102,6 +1304,71 @@
     }
 
     /* =========================
+       Pickers
+       ========================= */
+
+    function setupPicker({ pickerId, valueInputId, customInputId, onselect }) {
+      const picker = document.getElementById(pickerId);
+      if (!picker) return;
+
+      const valueInput  = document.getElementById(valueInputId);
+      const customInput = customInputId ? document.getElementById(customInputId) : null;
+      const isDual      = customInput && customInput === valueInput;
+
+      const btns = Array.from(picker.querySelectorAll(".picker-opt"));
+
+      btns.forEach(btn => {
+        btn.addEventListener("click", () => {
+          btns.forEach(b => b.classList.remove("active"));
+          btn.classList.add("active");
+
+          if (btn.dataset.value === "custom") {
+            if (customInput) { customInput.hidden = false; customInput.focus(); }
+          } else {
+            if (customInput) customInput.hidden = true;
+            valueInput.value = btn.dataset.value;
+          }
+
+          if (onselect) onselect();
+        });
+      });
+
+      if (customInput && !isDual) {
+        customInput.addEventListener("input", () => {
+          valueInput.value = customInput.value;
+          if (onselect) onselect();
+        });
+      }
+      if (customInput && isDual) {
+        customInput.addEventListener("input", () => { if (onselect) onselect(); });
+      }
+    }
+
+    function resetPicker(pickerId, defaultVal, customInput) {
+      const picker = document.getElementById(pickerId);
+      if (!picker) return;
+      picker.querySelectorAll(".picker-opt").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.value === String(defaultVal));
+      });
+      if (customInput) { customInput.hidden = true; customInput.value = ""; }
+    }
+
+    function setupPickers() {
+      const clearCount = () => {
+        setCardValidity(DOM.cardCount, true);
+        DOM.boxResConteo.classList.remove("error");
+      };
+      const clearPassage = () => {
+        setCardValidity(DOM.cardPassage, true);
+        DOM.boxResInoculo.classList.remove("error");
+      };
+
+      setupPicker({ pickerId: "pickerCuadrantes", valueInputId: "inpCuadrantes",  customInputId: "inpCuadrantesCustom", onselect: clearCount   });
+      setupPicker({ pickerId: "pickerDilucion",   valueInputId: "inpDilucion",    customInputId: "inpDilucion",         onselect: clearCount   });
+      setupPicker({ pickerId: "pickerV2",          valueInputId: "inpV2",          customInputId: "inpV2",               onselect: clearPassage });
+    }
+
+    /* =========================
        Reset
        ========================= */
 
@@ -1126,15 +1393,25 @@
     }
 
     function resetInputs() {
-      DOM.inpVivas.value = "";
+      DOM.inpVivas.value  = "";
       DOM.inpMuertas.value = "";
+
+      // Cuadrantes picker → reset to 10
+      resetPicker("pickerCuadrantes", "10", DOM.inpCuadrantesCustom);
       DOM.inpCuadrantes.value = "10";
+
+      // Dilución picker → reset to 2
+      resetPicker("pickerDilucion", "2", DOM.inpDilucion);
       DOM.inpDilucion.value = "2";
 
       DOM.inpC1.value = "";
-      DOM.inpV2.value = "25";
-      DOM.inpC2.value = "0.3";
       DOM.inpC1.placeholder = t("placeholderC1");
+
+      // Vol. Meta picker → reset to 25
+      resetPicker("pickerV2", "25", DOM.inpV2);
+      DOM.inpV2.value = "25";
+
+      DOM.inpC2.value = "0.3";
     }
 
     function resetApp() {
@@ -1188,8 +1465,8 @@
       DOM.outConc.textContent = formatFixed(viableConc, 2);
       DOM.outViability.textContent = `${formatFixed(viabilityPct, 1)}%`;
 
-      const minTotal = squares === 10 ? 100 : 50;
-      const maxTotal = squares === 10 ? 500 : 250;
+      const minTotal = squares * 10;
+      const maxTotal = squares * 50;
 
       if (total < minTotal) setStatusBadge("low");
       else if (total > maxTotal) setStatusBadge("high");
@@ -1338,8 +1615,15 @@
       DOM.sheetBackdrop.addEventListener("click", (e) => { if (e.target === DOM.sheetBackdrop) closeSheet(); });
       window.addEventListener("keydown", (e) => { if (e.key === "Escape") closeSheet(); });
 
+      // Neubauer detail toggle
+      DOM.btnNeubauerInfo.addEventListener("click", () => {
+        const isHidden = DOM.neubauerDetail.hidden;
+        DOM.neubauerDetail.hidden = !isHidden;
+        DOM.btnNeubauerInfo.setAttribute("aria-expanded", String(isHidden));
+      });
+
       // Soft reset error styles while typing
-      const countFields = [DOM.inpVivas, DOM.inpMuertas, DOM.inpCuadrantes, DOM.inpDilucion];
+      const countFields = [DOM.inpVivas, DOM.inpMuertas, DOM.inpDilucion];
       const passageFields = [DOM.inpC1, DOM.inpV2, DOM.inpC2];
 
       countFields.forEach((field) => {
@@ -1364,6 +1648,7 @@
       loadSavedLanguage();
       applyTranslations(APP.currentLanguage);
       resetAllOutputs();
+      setupPickers();
       bindEvents();
       setupInstallPrompt();
       registerServiceWorker();
