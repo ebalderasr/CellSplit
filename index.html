@@ -64,7 +64,7 @@
       --radius: 22px;
       --radius-sm: 16px;
       --radius-xs: 11px;
-      --maxw: 900px;
+      --maxw: 620px;
 
       --blur-sm: blur(18px) saturate(160%);
       --blur: blur(32px) saturate(180%);
@@ -733,6 +733,27 @@
 
     footer strong { color: var(--secondary); }
 
+    /* ── iOS install banner ──────────────────── */
+    .ios-install-banner {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      background: var(--bg-elev);
+      backdrop-filter: var(--blur-sm);
+      -webkit-backdrop-filter: var(--blur-sm);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-sm);
+      box-shadow: var(--shadow-sm);
+      font-size: 0.84rem;
+      font-weight: 500;
+      color: var(--secondary);
+      margin-bottom: 12px;
+    }
+    .ios-install-banner.visible { display: flex; }
+    .ios-install-banner strong { color: var(--label); }
+    .ios-install-banner svg { flex-shrink: 0; color: var(--tint); }
+
     @media (prefers-reduced-motion: reduce) {
       * { transition: none !important; }
     }
@@ -785,17 +806,26 @@
             <span>Limpiar</span>
           </button>
 
-          <button class="btn btn-primary btn-install" id="install-btn" type="button" hidden data-i18n="btnInstall">
+          <button class="btn btn-install" id="install-btn" type="button" hidden aria-label="Install app">
             <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
               <path d="M12 3v10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
               <path d="M8 11l4 4 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
               <path d="M4 20h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
             </svg>
-            <span>Instalar</span>
+            <span data-i18n="btnInstall">Instalar</span>
           </button>
         </div>
       </div>
     </header>
+
+    <!-- iOS install banner -->
+    <div class="ios-install-banner" id="ios-install-banner" role="note">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M12 3v10M8 11l4 4 4-4M4 20h16"/>
+      </svg>
+      <span data-i18n="ios_install_hint">Para instalar: toca <strong>Compartir</strong> → <strong>Añadir al inicio</strong></span>
+      <button class="btn btn-ghost" id="btn-ios-dismiss" type="button" style="margin-left:auto;padding:4px 10px;font-size:0.80rem;" aria-label="Cerrar">✕</button>
+    </div>
 
     <!-- Module tiles (single navigation; no duplicated bar) -->
     <div class="tiles" aria-label="Modules overview">
@@ -1018,6 +1048,7 @@
         btnDocs: "Repo",
         btnClear: "Limpiar",
         btnInstall: "Instalar",
+        ios_install_hint: "Para instalar: toca <strong>Compartir</strong> → <strong>Añadir al inicio</strong>",
 
         btnInfo: "Info",
         btnClose: "Cerrar",
@@ -1079,6 +1110,7 @@
         btnDocs: "Repo",
         btnClear: "Clear",
         btnInstall: "Install",
+        ios_install_hint: "To install: tap <strong>Share</strong> → <strong>Add to Home Screen</strong>",
 
         btnInfo: "Info",
         btnClose: "Close",
@@ -1644,6 +1676,21 @@
     /* =========================
        App Init
        ========================= */
+    function setupiOSInstallBanner() {
+      const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+      const isStandalone = window.navigator.standalone === true;
+      const dismissed = (() => { try { return localStorage.getItem('cs_ios_banner'); } catch(_){} return null; })();
+      if (!isIOS || isStandalone || dismissed) return;
+
+      const banner = document.getElementById('ios-install-banner');
+      if (banner) banner.classList.add('visible');
+
+      document.getElementById('btn-ios-dismiss')?.addEventListener('click', () => {
+        banner?.classList.remove('visible');
+        try { localStorage.setItem('cs_ios_banner', '1'); } catch(_) {}
+      });
+    }
+
     function init() {
       loadSavedLanguage();
       applyTranslations(APP.currentLanguage);
@@ -1651,6 +1698,7 @@
       setupPickers();
       bindEvents();
       setupInstallPrompt();
+      setupiOSInstallBanner();
       registerServiceWorker();
 
       // Restore last module (optional)
