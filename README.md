@@ -59,11 +59,11 @@ The optimal window (~10–50 events per square) avoids both sampling noise from 
 
 **Formulas**
 
-$$\text{Viable conc.} \left(\frac{\times 10^6 \text{ cells}}{\text{mL}}\right) = \frac{\text{Live}}{\text{Squares}} \times \text{Dilution} \times 0.01$$
+$$\frac{\text{cells}}{\text{mL}} = \frac{\text{Live}}{\text{Squares}} \times \text{Dilution} \times 10{,}000$$
 
-$$\text{Viability} \ (\%) = \frac{\text{Live}}{\text{Live} + \text{Dead}} \times 100$$
+$$\text{Viability (\%)} = \frac{\text{Live}}{\text{Live} + \text{Dead}} \times 100$$
 
-The factor 0.01 follows from the Neubauer chamber geometry: one large square covers 1 mm² at 0.1 mm depth = 10⁻⁴ mL, so its reciprocal is 10,000; reporting in ×10⁶ cells/mL reduces this to 0.01.
+The factor 10,000 comes from the Neubauer chamber geometry: one large square covers 1 mm² at 0.1 mm depth = 10⁻⁴ mL, so multiplying by its reciprocal converts count per square into cells per mL.
 
 ### Module 2 — Passage / inoculum
 
