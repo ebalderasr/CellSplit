@@ -4,6 +4,10 @@
 
 ### Neubauer cell counting and passage planning for CHO cultures
 
+<a href="https://ebalderasr.github.io/CellSplit/">
+  <img src="icon-512.png" alt="CellSplit" width="120">
+</a>
+
 <br>
 
 **[→ Open the live app](https://ebalderasr.github.io/CellSplit/)**
