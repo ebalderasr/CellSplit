@@ -1,38 +1,77 @@
 <div align="center">
 
-# ⚗ CellSplit
+# CellSplit
 
 ### Neubauer cell counting and passage planning for CHO cultures
 
-**Count cells → get viable density and inoculum volume — in your browser, no installation required.**
+<br>
 
-<br/>
+**[→ Open the live app](https://ebalderasr.github.io/CellSplit/)**
 
-<a href="https://ebalderasr.github.io/CellSplit/">
-  <img src="https://img.shields.io/badge/🚀%20Launch%20CellSplit-Open%20Live%20App-d4ff00?style=for-the-badge&labelColor=000000" alt="Launch CellSplit" height="50">
-</a>
+<br>
 
-<br/>
-
-[![PWA](https://img.shields.io/badge/PWA-Offline%20Ready-5A0FC8?style=for-the-badge&logo=pwa&logoColor=white)](https://ebalderasr.github.io/CellSplit/)
-[![License](https://img.shields.io/badge/License-MIT-107F80?style=for-the-badge)](LICENSE)
+[![Stack](https://img.shields.io/badge/Stack-HTML_·_CSS_·_JavaScript-4A90D9?style=for-the-badge)]()
+[![Focus](https://img.shields.io/badge/Focus-Cell_Culture_·_CHO-34C759?style=for-the-badge)]()
+[![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)](./LICENSE)
+[![Part of](https://img.shields.io/badge/Part_of-HostCell_Lab_Suite-5856D6?style=for-the-badge)](https://github.com/ebalderasr)
 
 </div>
 
 ---
 
-## Why CellSplit?
+## What is CellSplit?
 
-Routine cell culture maintenance involves two calculations performed at every passage: converting a Neubauer chamber count into a viable cell density, and computing the inoculum volume needed to seed the next flask at a target density. Done manually, this is error-prone and slow — especially when working inside a biosafety cabinet.
+CellSplit is a **browser-based calculator** for routine cell culture maintenance. It covers the two calculations performed at every passage: converting a Neubauer chamber count into viable cell density, and computing the inoculum volume needed to seed the next flask at a target density.
 
-**CellSplit compresses that workflow into two steps.** Enter your live and dead cell counts, and the app returns the viable concentration and viability. Switch to the passage module and the concentration is already filled in — just set your target volume and density.
+Both modules are linked — the viable concentration calculated in Module 1 is transferred automatically to Module 2, eliminating transcription between steps. The app runs entirely in the browser, installs as a PWA for offline use inside the biosafety cabinet, and requires no setup.
 
-- Neubauer hemocytometer math with configurable squares and dilution factor
-- Count diagnostics: flags counts outside the optimal statistical range
-- Automatic data transfer from counting to passaging
-- Installable PWA — works fully offline inside the biosafety cabinet
+---
 
-No dependencies. No installation. Opens instantly in any modern browser.
+## Why it matters
+
+Cell culture passaging involves repetitive manual arithmetic done under time pressure, often inside a biosafety cabinet without access to a computer. Without a dedicated tool:
+
+- Concentration calculations are done by hand or on scratch paper, introducing transcription errors
+- The inoculum volume must be computed separately, from values just written down
+- No feedback is given when the cell count falls outside a statistically reliable range
+
+CellSplit removes all three problems. It validates the count range, computes both outputs in one step, and carries the result forward automatically.
+
+---
+
+## How it works
+
+### Module 1 — Cell count
+
+Enter the number of live and dead cells counted, the number of squares used, and the dilution factor. CellSplit returns the viable cell concentration (×10⁶ cells/mL), the viability (%), and a count diagnostic.
+
+| Diagnostic | Criterion |
+|---|---|
+| Low | Total cells < squares × 10 |
+| Optimal | squares × 10 ≤ total ≤ squares × 50 |
+| High | Total cells > squares × 50 |
+
+The optimal window (~10–50 events per square) avoids both sampling noise from sparse counts and systematic undercounting from cell overlap.
+
+**Formulas**
+
+```
+Viable conc. (×10⁶ cells/mL) = (Live / Squares) × Dilution × 0.01
+Viability (%) = Live / (Live + Dead) × 100
+```
+
+The factor 0.01 follows from the Neubauer chamber geometry: one large square covers 1 mm² at 0.1 mm depth = 10⁻⁴ mL, so its reciprocal is 10,000; reporting in ×10⁶ cells/mL reduces this to 0.01.
+
+### Module 2 — Passage / inoculum
+
+The viable concentration from Module 1 is pre-filled. Set the target culture volume and target seeding density; CellSplit returns the inoculum volume and the volume of fresh medium required.
+
+```
+V₁ = (C₂ × V₂) / C₁
+Fresh medium = V₂ − V₁
+```
+
+C₁ must exceed C₂. The app returns an error if the target density is higher than the current culture density.
 
 ---
 
@@ -40,62 +79,29 @@ No dependencies. No installation. Opens instantly in any modern browser.
 
 | | |
 |---|---|
-| **Neubauer counting** | Configurable squares (1–10) and dilution factor (1–200); supports all common setups |
-| **Count diagnostics** | Visual badge flags low, high, or optimal cell counts per square |
-| **Passage calculator** | Solves C₁V₁ = C₂V₂ for inoculum and fresh medium volumes |
-| **Auto data link** | Viable concentration transfers automatically to the passage module |
+| **Automatic data link** | Viable concentration transfers from Module 1 to Module 2 without manual entry |
+| **Count diagnostics** | Visual badge flags low, optimal, or high cell counts per square |
 | **Offline-first PWA** | Service Worker caches all assets; works without internet after first load |
-| **Bilingual UI** | Full Spanish / English interface, persisted in localStorage |
-| **Dark mode** | System-level dark mode support — high contrast for microscope rooms |
+| **Bilingual UI** | Full Spanish / English interface, persisted across sessions |
+| **Dark mode** | System-level dark mode — high contrast for low-light microscope rooms |
+| **No installation** | Opens instantly in any modern browser; installable on Android, iOS, and desktop |
 
 ---
 
-## Getting started
+## Tech stack
 
-1. Open **[ebalderasr.github.io/CellSplit](https://ebalderasr.github.io/CellSplit/)**
-2. Enter your live and dead cell counts
-3. Confirm the number of squares counted and the dilution factor
-4. Click **Analizar Conteo** — viable density, viability, and diagnostic appear instantly
-5. Switch to **02. Pase / Inóculo** — the concentration is pre-filled
-6. Set your target volume and target density, then click **Calcular Pase**
+**Frontend**
 
-To install as a PWA: on Android or desktop, use the **Install** button in the nav bar. On iOS, tap **Share → Add to Home Screen** in Safari.
+![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=flat-square&logo=html5&logoColor=white)
+![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=flat-square&logo=css3&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=javascript&logoColor=black)
 
----
+**Deployment**
 
-## Methods
+![GitHub Pages](https://img.shields.io/badge/GitHub_Pages-222222?style=flat-square&logo=github&logoColor=white)
+![PWA](https://img.shields.io/badge/PWA-5A0FC8?style=flat-square&logo=pwa&logoColor=white)
 
-### Viable cell concentration
-
-Cells are counted in the large corner squares (1 mm² each) of a standard Neubauer chamber (depth = 0.1 mm). The conversion factor of 10,000 comes from the reciprocal volume of one large square (10⁻⁴ mL):
-
-$$\text{Viable conc.} \left(\frac{\times 10^6 \text{ cells}}{\text{mL}}\right) = \frac{\text{Live cells counted}}{\text{Squares counted}} \times \text{Dilution factor} \times 0.01$$
-
-### Viability
-
-$$\text{Viability (\%)} = \frac{\text{Live cells}}{\text{Live cells} + \text{Dead cells}} \times 100$$
-
-Dye exclusion is assumed (e.g. Trypan Blue). Dead cells take up the dye and appear dark; live cells exclude it.
-
-### Count diagnostic thresholds
-
-| Status | Criterion |
-|---|---|
-| Low | Total cells counted < squares × 10 |
-| Optimal | squares × 10 ≤ total ≤ squares × 50 |
-| High | Total cells counted > squares × 50 |
-
-The optimal window (~10–50 events per square) minimizes both sampling noise (low counts) and systematic undercounting from cell overlap (high counts).
-
-### Passage / inoculum calculation
-
-Applies conservation of mass assuming ideal mixing:
-
-$$V_1 = \frac{C_2 \times V_2}{C_1}$$
-
-where C₁ is the current density, C₂ is the target seeding density, V₂ is the target culture volume, and V₁ is the required inoculum. Fresh medium volume = V₂ − V₁.
-
-> C₁ must be greater than C₂. The app returns an error if you attempt to seed at a density higher than the current culture.
+Fully static — no backend, no framework, no build step. All computation runs client-side in vanilla JavaScript.
 
 ---
 
@@ -116,19 +122,6 @@ CellSplit/
         └── app.js      ← all application logic
 ```
 
-No build step. The entire app is static and deployable to any file host.
-
----
-
-## Tech stack
-
-![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=flat-square&logo=html5&logoColor=white)
-![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=flat-square&logo=css3&logoColor=white)
-![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=javascript&logoColor=black)
-![PWA](https://img.shields.io/badge/PWA-5A0FC8?style=flat-square&logo=pwa&logoColor=white)
-
-Fully static — no backend, no framework, no build tools. All computation runs client-side in vanilla JavaScript.
-
 ---
 
 ## Author
@@ -144,4 +137,10 @@ Instituto de Biotecnología (IBt), UNAM
 
 ## Related
 
-[**Clonalyzer 2**](https://github.com/ebalderasr/Clonalyzer-2) — browser-based kinetics analysis for CHO fed-batch cultures: specific rates, clone comparisons, and publication-ready plots from a single CSV upload.
+[**CellBlock**](https://github.com/ebalderasr/CellBlock) — shared biosafety cabinet scheduling for cell culture research groups.
+
+[**Clonalyzer 2**](https://github.com/ebalderasr/Clonalyzer-2) — browser-based kinetics analysis for CHO fed-batch cultures.
+
+---
+
+<div align="center"><i>CellSplit — count, calculate, passage.</i></div>
