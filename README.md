@@ -6,9 +6,12 @@
 
 **Count cells → get viable density and inoculum volume — in your browser, no installation required.**
 
-[![Live App](https://img.shields.io/badge/Live%20App-GitHub%20Pages-2563EB?style=for-the-badge&logo=github)](https://ebalderasr.github.io/CellSplit/)
 [![PWA](https://img.shields.io/badge/PWA-Offline%20Ready-5A0FC8?style=for-the-badge&logo=pwa&logoColor=white)](https://ebalderasr.github.io/CellSplit/)
 [![License](https://img.shields.io/badge/License-MIT-107F80?style=for-the-badge)](LICENSE)
+
+<br/>
+
+**[→ Open CellSplit](https://ebalderasr.github.io/CellSplit/)**
 
 </div>
 
