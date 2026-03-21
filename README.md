@@ -59,10 +59,9 @@ The optimal window (~10–50 events per square) avoids both sampling noise from 
 
 **Formulas**
 
-```
-Viable conc. (×10⁶ cells/mL) = (Live / Squares) × Dilution × 0.01
-Viability (%) = Live / (Live + Dead) × 100
-```
+$$\text{Viable conc.} \left(\frac{\times 10^6 \text{ cells}}{\text{mL}}\right) = \frac{\text{Live}}{\text{Squares}} \times \text{Dilution} \times 0.01$$
+
+$$\text{Viability} \ (\%) = \frac{\text{Live}}{\text{Live} + \text{Dead}} \times 100$$
 
 The factor 0.01 follows from the Neubauer chamber geometry: one large square covers 1 mm² at 0.1 mm depth = 10⁻⁴ mL, so its reciprocal is 10,000; reporting in ×10⁶ cells/mL reduces this to 0.01.
 
@@ -70,10 +69,9 @@ The factor 0.01 follows from the Neubauer chamber geometry: one large square cov
 
 The viable concentration from Module 1 is pre-filled. Set the target culture volume and target seeding density; CellSplit returns the inoculum volume and the volume of fresh medium required.
 
-```
-V₁ = (C₂ × V₂) / C₁
-Fresh medium = V₂ − V₁
-```
+$$V_1 = \frac{C_2 \times V_2}{C_1}$$
+
+$$V_{\text{fresh}} = V_2 - V_1$$
 
 C₁ must exceed C₂. The app returns an error if the target density is higher than the current culture density.
 
