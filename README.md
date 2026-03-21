@@ -8,7 +8,9 @@
 
 <br/>
 
-[![Launch App](https://img.shields.io/badge/🚀%20Launch%20CellSplit-Open%20Live%20App-d4ff00?style=for-the-badge&labelColor=000000)](https://ebalderasr.github.io/CellSplit/)
+<a href="https://ebalderasr.github.io/CellSplit/">
+  <img src="https://img.shields.io/badge/🚀%20Launch%20CellSplit-Open%20Live%20App-d4ff00?style=for-the-badge&labelColor=000000" alt="Launch CellSplit" height="50">
+</a>
 
 <br/>
 
