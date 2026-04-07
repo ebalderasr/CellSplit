@@ -20,47 +20,48 @@
 </head>
 
 <body>
-  <div class="container">
-    <!-- NAV -->
-    <header class="nav" aria-label="CellSplit navigation">
-      <!-- Row 1: Brand + Host Cell -->
-      <div class="nav-row nav-row-brand">
-        <div class="brand">
-          <img src="./icon-192.png" alt="CellSplit" class="app-icon" />
-          <div class="brand-text">
-            <h1 class="app-title">CellSplit</h1>
-            <div class="app-subtitle">Count, calculate, passage</div>
-          </div>
+  <!-- NAV -->
+  <header class="nav" aria-label="CellSplit navigation">
+    <!-- Row 1: Brand + Host Cell -->
+    <div class="nav-row nav-row-brand">
+      <div class="brand">
+        <img src="./icon-192.png" alt="CellSplit" class="app-icon" />
+        <div class="brand-text">
+          <h1 class="app-title">CellSplit</h1>
+          <div class="app-subtitle">Count, calculate, passage</div>
         </div>
-        <a class="hc-suite-pill" href="https://www.hostcell.app" target="_blank" rel="noopener noreferrer" aria-label="Host Cell Lab Suite">
-          <span class="hc-suite-label">Host Cell</span>
-        </a>
       </div>
+      <a class="hc-suite-pill" href="https://www.hostcell.app" target="_blank" rel="noopener noreferrer" aria-label="Host Cell Lab Suite">
+        <span class="hc-suite-label">Host Cell</span>
+      </a>
+    </div>
 
-      <!-- Row 2: Tools -->
-      <div class="nav-row nav-row-tools">
-        <div class="seg" aria-label="Language selector">
-          <button id="lang-es" type="button" aria-selected="true">ES</button>
-          <button id="lang-en" type="button" aria-selected="false">EN</button>
-        </div>
-        <button class="btn-info-badge" id="btn-info" type="button" aria-label="Info">!</button>
-        <button class="btn btn-danger" id="btn-clear" type="button" aria-label="Clear">
-          <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <path d="M3 6h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            <path d="M8 6V4h8v2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            <path d="M7 6l1 15h8l1-15" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
-          </svg>
-        </button>
-        <button class="btn btn-install" id="install-btn" type="button" hidden aria-label="Install app">
-          <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <path d="M12 3v10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            <path d="M8 11l4 4 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M4 20h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          </svg>
-          <span data-i18n="btnInstall">Instalar</span>
-        </button>
+    <!-- Row 2: Tools -->
+    <div class="nav-row nav-row-tools">
+      <div class="seg" aria-label="Language selector">
+        <button id="lang-es" type="button" aria-selected="true">ES</button>
+        <button id="lang-en" type="button" aria-selected="false">EN</button>
       </div>
-    </header>
+      <button class="btn-info-badge" id="btn-info" type="button" aria-label="Info">!</button>
+      <button class="btn btn-danger" id="btn-clear" type="button" aria-label="Clear">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M3 6h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M8 6V4h8v2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M7 6l1 15h8l1-15" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <button class="btn btn-install" id="install-btn" type="button" hidden aria-label="Install app">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M12 3v10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M8 11l4 4 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M4 20h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <span data-i18n="btnInstall">Instalar</span>
+      </button>
+    </div>
+  </header>
+
+  <div class="container">
 
     <!-- iOS install banner -->
     <div class="ios-install-banner" id="ios-install-banner" role="note">
