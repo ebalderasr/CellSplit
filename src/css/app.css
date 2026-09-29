@@ -390,6 +390,29 @@ body::before {
 .panel { display: none; }
 .panel.active { display: block; }
 
+/* ── Boundary elastic bounce (topes laterales) ── */
+@keyframes elasticTopeLeft {
+  0% { transform: translateX(0); }
+  35% { transform: translateX(12px); }
+  70% { transform: translateX(-3px); }
+  100% { transform: translateX(0); }
+}
+
+@keyframes elasticTopeRight {
+  0% { transform: translateX(0); }
+  35% { transform: translateX(-12px); }
+  70% { transform: translateX(3px); }
+  100% { transform: translateX(0); }
+}
+
+.tope-bounce-left {
+  animation: elasticTopeLeft 0.26s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.tope-bounce-right {
+  animation: elasticTopeRight 0.26s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
 .card {
   background: var(--bg-elev);
   backdrop-filter: var(--blur);

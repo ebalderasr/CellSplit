@@ -205,18 +205,9 @@ function resetPicker(pickerId, defaultVal, customInput) {
 }
 
 function setupPickers() {
-  const clearCount = () => {
-    setCardValidity(DOM.cardCount, true);
-    DOM.boxResConteo.classList.remove('error');
-  };
-  const clearPassage = () => {
-    setCardValidity(DOM.cardPassage, true);
-    DOM.boxResInoculo.classList.remove('error');
-  };
-
-  setupPicker({ pickerId: 'pickerCuadrantes', valueInputId: 'inpCuadrantes',  customInputId: 'inpCuadrantesCustom', onselect: clearCount   });
-  setupPicker({ pickerId: 'pickerDilucion',   valueInputId: 'inpDilucion',    customInputId: 'inpDilucion',         onselect: clearCount   });
-  setupPicker({ pickerId: 'pickerV2',          valueInputId: 'inpV2',          customInputId: 'inpV2',               onselect: clearPassage });
+  setupPicker({ pickerId: 'pickerCuadrantes', valueInputId: 'inpCuadrantes',  customInputId: 'inpCuadrantesCustom', onselect: autoCalculateCount   });
+  setupPicker({ pickerId: 'pickerDilucion',   valueInputId: 'inpDilucion',    customInputId: 'inpDilucion',         onselect: autoCalculateCount   });
+  setupPicker({ pickerId: 'pickerV2',          valueInputId: 'inpV2',          customInputId: 'inpV2',               onselect: autoCalculatePassage });
 }
 
 /* =========================
@@ -327,6 +318,38 @@ function analyzeCount() {
   showResultBox(DOM.boxResConteo, { isError: false });
 }
 
+function autoCalculateCount() {
+  setCardValidity(DOM.cardCount, true);
+  DOM.boxResConteo.classList.remove('error');
+
+  const liveStr = DOM.inpVivas.value.trim();
+  const deadStr = DOM.inpMuertas.value.trim();
+
+  // If both inputs are blank, keep outputs clean
+  if (liveStr === '' && deadStr === '') {
+    resetCountOutputs();
+    return;
+  }
+
+  const live = parseInteger(DOM.inpVivas);
+  const dead = parseInteger(DOM.inpMuertas);
+  const squares = parseInteger(DOM.inpCuadrantes);
+  const dilution = parseNumber(DOM.inpDilucion);
+
+  const inputsValid =
+    isFiniteNonNegative(live) &&
+    isFiniteNonNegative(dead) &&
+    isFinitePositive(squares) &&
+    isFinitePositive(dilution);
+
+  if (!inputsValid) return;
+
+  const total = live + dead;
+  if (total <= 0) return;
+
+  analyzeCount();
+}
+
 /* =========================
    Module 2: Passage / Inoculum
    =========================
@@ -362,6 +385,19 @@ function calculatePassage() {
   DOM.outFreshMedium.textContent = formatFixed(freshMedium, 3);
 
   showResultBox(DOM.boxResInoculo, { isError: false });
+}
+
+function autoCalculatePassage() {
+  setCardValidity(DOM.cardPassage, true);
+  DOM.boxResInoculo.classList.remove('error');
+
+  const c1 = parseNumber(DOM.inpC1);
+  const v2 = parseNumber(DOM.inpV2);
+  const c2 = parseNumber(DOM.inpC2);
+
+  if (isFinitePositive(c1) && isFinitePositive(v2) && isFinitePositive(c2) && c1 > c2) {
+    calculatePassage();
+  }
 }
 
 /* =========================
@@ -488,25 +524,27 @@ function bindEvents() {
     DOM.btnNeubauerInfo.setAttribute('aria-expanded', String(isHidden));
   });
 
-  // Clear error styles while typing
-  [DOM.inpVivas, DOM.inpMuertas, DOM.inpDilucion].forEach((field) => {
-    field.addEventListener('input', () => {
-      setCardValidity(DOM.cardCount, true);
-      DOM.boxResConteo.classList.remove('error');
-    });
+  // Live reactive calculations
+  [DOM.inpVivas, DOM.inpMuertas].forEach((field) => {
+    field.addEventListener('input', autoCalculateCount);
   });
 
   [DOM.inpC1, DOM.inpV2, DOM.inpC2].forEach((field) => {
-    field.addEventListener('input', () => {
-      setCardValidity(DOM.cardPassage, true);
-      DOM.boxResInoculo.classList.remove('error');
-    });
+    field.addEventListener('input', autoCalculatePassage);
   });
 }
 
 /* =========================
-   Touch Swipe Navigation
+   Touch Swipe Navigation (with boundaries / topes)
    ========================= */
+function triggerTopeBounce(element, direction) {
+  if (!element) return;
+  const cls = direction === 'left' ? 'tope-bounce-left' : 'tope-bounce-right';
+  element.classList.remove('tope-bounce-left', 'tope-bounce-right');
+  void element.offsetWidth; // trigger reflow
+  element.classList.add(cls);
+}
+
 function setupSwipeNavigation() {
   let startX = 0;
   let startY = 0;
@@ -536,11 +574,22 @@ function setupSwipeNavigation() {
     if (deltaTime > 800) return;
     if (absX < 45 || absX <= absY * 1.35) return;
 
-    // Switch between Module 1 (count) and Module 2 (passage)
     if (APP.currentModule === 'count') {
-      showModule('passage');
-    } else {
-      showModule('count');
+      if (deltaX < -45) {
+        // Swipe left -> advance to Module 2 (Passage)
+        showModule('passage');
+      } else if (deltaX > 45) {
+        // Swipe right -> TOPE (already on Module 1)
+        triggerTopeBounce(DOM.cardCount, 'left');
+      }
+    } else if (APP.currentModule === 'passage') {
+      if (deltaX > 45) {
+        // Swipe right -> return to Module 1 (Count)
+        showModule('count');
+      } else if (deltaX < -45) {
+        // Swipe left -> TOPE (already on Module 2)
+        triggerTopeBounce(DOM.cardPassage, 'right');
+      }
     }
   }, { passive: true });
 }
