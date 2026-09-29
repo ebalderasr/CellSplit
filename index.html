@@ -125,27 +125,31 @@
             <!-- Column 1: Live Cells -->
             <div class="apparatus-col live-col">
               <div class="apparatus-display-box">
-                <span class="apparatus-label live" data-i18n="lblLive">VIVAS</span>
+                <div class="apparatus-display-header">
+                  <span class="apparatus-label live" data-i18n="lblLive">VIVAS</span>
+                  <button type="button" class="btn-tally-undo" id="btn-undo-live" title="Deshacer 1" aria-label="Restar 1 viva">−1</button>
+                </div>
                 <div class="apparatus-counter mono" id="disp-live">000</div>
               </div>
               <button type="button" class="apparatus-btn btn-live" id="btn-tally-live" aria-label="Contar viva (+1)">
                 <span class="apparatus-btn-icon">🟢</span>
                 <span class="apparatus-btn-text" data-i18n="tallyLiveBtn">+1 VIVA</span>
               </button>
-              <button type="button" class="btn-tally-undo" id="btn-undo-live" title="Deshacer 1" aria-label="Restar 1 viva">−1</button>
             </div>
 
             <!-- Column 2: Dead Cells -->
             <div class="apparatus-col dead-col">
               <div class="apparatus-display-box">
-                <span class="apparatus-label dead" data-i18n="lblDead">MUERTAS</span>
+                <div class="apparatus-display-header">
+                  <span class="apparatus-label dead" data-i18n="lblDead">MUERTAS</span>
+                  <button type="button" class="btn-tally-undo" id="btn-undo-dead" title="Deshacer 1" aria-label="Restar 1 muerta">−1</button>
+                </div>
                 <div class="apparatus-counter mono" id="disp-dead">000</div>
               </div>
               <button type="button" class="apparatus-btn btn-dead" id="btn-tally-dead" aria-label="Contar muerta (+1)">
                 <span class="apparatus-btn-icon">🔴</span>
                 <span class="apparatus-btn-text" data-i18n="tallyDeadBtn">+1 MUERTA</span>
               </button>
-              <button type="button" class="btn-tally-undo" id="btn-undo-dead" title="Deshacer 1" aria-label="Restar 1 muerta">−1</button>
             </div>
           </div>
         </div>
