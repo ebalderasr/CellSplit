@@ -307,7 +307,7 @@ body::before {
 /* ── Module tiles — tab bar style ── */
 .tiles {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 4px;
   margin-bottom: 16px;
   background: var(--bg-field);
@@ -901,6 +901,210 @@ footer.hc-footer {
 .ios-install-banner.visible { display: flex; }
 .ios-install-banner strong { color: var(--label); }
 .ios-install-banner svg { flex-shrink: 0; color: var(--tint); }
+
+@media (max-width: 440px) {
+  .tile { padding: 9px 4px; gap: 3px; }
+  .tile-title { font-size: 0.80rem; }
+  .tile-sub { display: none; }
+}
+
+/* ── Physical Cell Tally Counter Apparatus ── */
+.chassis-card {
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow);
+}
+
+.chassis-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-sound-toggle {
+  background: var(--bg-field);
+  border: 1px solid var(--stroke-2);
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: transform 0.1s ease, background 0.14s ease, border-color 0.14s ease;
+  line-height: 1;
+}
+
+.btn-sound-toggle:active { transform: scale(0.92); }
+.btn-sound-toggle:not(.active) { opacity: 0.50; filter: grayscale(1); }
+
+.btn-counter-zero {
+  background: var(--bg-field);
+  border: 1px solid var(--stroke-2);
+  color: var(--secondary);
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 0.80rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.1s ease, color 0.14s ease, background 0.14s ease;
+}
+
+.btn-counter-zero:hover { color: var(--danger); background: var(--danger-bg); }
+.btn-counter-zero:active { transform: scale(0.92); }
+
+.apparatus-chassis {
+  background: var(--bg-field);
+  border: 1px solid var(--stroke-2);
+  border-radius: var(--radius-sm);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+/* Total readout bar */
+.apparatus-total-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg-elev);
+  border: 1px solid var(--stroke-2);
+  border-radius: 12px;
+  padding: 10px 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.apparatus-total-label {
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--secondary);
+}
+
+.apparatus-total-display {
+  font-size: 1.5rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  color: var(--label);
+  font-variant-numeric: tabular-nums;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+/* Dual button deck */
+.apparatus-deck {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.apparatus-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.apparatus-display-box {
+  width: 100%;
+  background: var(--bg-elev);
+  border: 1.5px solid var(--stroke-2);
+  border-radius: 14px;
+  padding: 8px 10px 10px;
+  text-align: center;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.06);
+}
+
+.apparatus-label {
+  display: block;
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  margin-bottom: 2px;
+}
+
+.apparatus-label.live { color: #30d158; }
+.apparatus-label.dead { color: #ff453a; }
+
+.apparatus-counter {
+  font-size: 2.2rem;
+  font-weight: 900;
+  letter-spacing: 0.10em;
+  color: var(--label);
+  font-variant-numeric: tabular-nums;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  line-height: 1.1;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Big mechanical clicker buttons */
+.apparatus-btn {
+  width: 100%;
+  height: 82px;
+  border-radius: 20px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: #ffffff;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.08s cubic-bezier(0.2, 0.9, 0.3, 1), box-shadow 0.08s ease;
+}
+
+.apparatus-btn:active {
+  transform: translateY(4px);
+}
+
+.apparatus-btn.btn-live {
+  background: linear-gradient(180deg, #34c759 0%, #28a745 100%);
+  box-shadow: 0 5px 0 #1e7e34, 0 8px 16px rgba(40, 167, 69, 0.35);
+}
+
+.apparatus-btn.btn-live:active {
+  box-shadow: 0 1px 0 #1e7e34, 0 3px 8px rgba(40, 167, 69, 0.25);
+}
+
+.apparatus-btn.btn-dead {
+  background: linear-gradient(180deg, #ff453a 0%, #dc3545 100%);
+  box-shadow: 0 5px 0 #bd2130, 0 8px 16px rgba(220, 53, 69, 0.35);
+}
+
+.apparatus-btn.btn-dead:active {
+  box-shadow: 0 1px 0 #bd2130, 0 3px 8px rgba(220, 53, 69, 0.25);
+}
+
+.apparatus-btn-icon {
+  font-size: 1.15rem;
+  line-height: 1;
+}
+
+.apparatus-btn-text {
+  font-size: 0.98rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.btn-tally-undo {
+  background: var(--bg-elev);
+  border: 1px solid var(--stroke-2);
+  color: var(--secondary);
+  border-radius: 999px;
+  padding: 4px 14px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.12s ease, transform 0.08s ease, color 0.12s ease;
+}
+
+.btn-tally-undo:hover {
+  color: var(--label);
+  border-color: var(--stroke-1);
+}
+
+.btn-tally-undo:active {
+  transform: scale(0.92);
+}
 
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; }

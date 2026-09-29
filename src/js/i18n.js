@@ -9,15 +9,30 @@ const I18N = {
     btnClose: "Cerrar",
     subtitle: "Host Cell Lab Suite · Cell splitting & passage planning",
     resTitle: "Resultados",
-    tabCount: "01. Conteo",
-    tabPassage: "02. Pase",
-    tile1N: "01",
-    tile1T: "Conteo de células",
-    tile2N: "02",
-    tile2T: "Pase / Inóculo",
 
-    card1Title: "Conteo de células",
-    card1Hint: 'Considera una cámara Neubauer con profundidad de 0.1 mm',
+    // Tiles
+    tile0N: "01",
+    tile0T: "Contador",
+    tile0S: "Vivas y muertas",
+    tile1N: "02",
+    tile1T: "Conteo",
+    tile1S: "Viabilidad · conc",
+    tile2N: "03",
+    tile2T: "Pase",
+    tile2S: "Inóculo · C1V1",
+
+    // Module 0: Physical Tally Counter
+    card0Title: "01. Contador de células",
+    card0Hint: "Instrumento con respuesta sonora mecánica",
+    btnResetZero: "⟲ En 0",
+    lblTotalCount: "TOTAL",
+    tallyLiveBtn: "+1 VIVA",
+    tallyDeadBtn: "+1 MUERTA",
+    btnTallyNext: "Analizar Conteo →",
+
+    // Module 1: Count
+    card1Title: "02. Conteo de células",
+    card1Hint: "Considera una cámara Neubauer con profundidad de 0.1 mm",
     neubauerDetail: 'Los cálculos consideran una Cámara Neubauer estándar con 9 cuadrantes grandes de 1 mm² cada uno. Los 4 cuadrantes de las esquinas (marcados "L" para leucocitos) están subdivididos en 16 cuadros de 0.25 mm de lado. El cuadrante central grande también está subdividido en 16 cuadros de 0.25 mm de lado; cada uno agrupa 16 mini cuadros de 0.05 mm de lado (área 0.0025 mm²). Los 5 cuadros de grupo del cuadrante central se usan para contar trombocitos y eritrocitos.',
     lblLive: "Vivas",
     lblDead: "Muertas",
@@ -31,7 +46,8 @@ const I18N = {
     resViability: "Viabilidad",
     statusDefault: "Diagnóstico",
 
-    card2Title: "Pase",
+    // Module 2: Passage
+    card2Title: "03. Pase",
     card2Hint: "C1V1 = C2V2 · cálculo de inóculo",
     lblCurrentC: 'Conc. Celular Actual (x10⁶ <span class="mono">cell/mL</span>)',
     lblTargetV: 'Vol. Meta (<span class="mono">mL</span>)',
@@ -71,15 +87,30 @@ const I18N = {
     btnClose: "Close",
     subtitle: "Host Cell Lab Suite · Cell splitting & passage planning",
     resTitle: "Results",
-    tabCount: "01. Count",
-    tabPassage: "02. Passage",
-    tile1N: "01",
-    tile1T: "Cell count",
-    tile2N: "02",
-    tile2T: "Passage / Inoculum",
 
-    card1Title: "Cell Count",
-    card1Hint: 'Neubauer chamber with a depth of 0.1 mm',
+    // Tiles
+    tile0N: "01",
+    tile0T: "Counter",
+    tile0S: "Live & dead",
+    tile1N: "02",
+    tile1T: "Count",
+    tile1S: "Viability · conc",
+    tile2N: "03",
+    tile2T: "Passage",
+    tile2S: "Inoculum · C1V1",
+
+    // Module 0: Physical Tally Counter
+    card0Title: "01. Cell Tally Counter",
+    card0Hint: "Benchtop laboratory instrument with mechanical audio",
+    btnResetZero: "⟲ Zero",
+    lblTotalCount: "TOTAL",
+    tallyLiveBtn: "+1 LIVE",
+    tallyDeadBtn: "+1 DEAD",
+    btnTallyNext: "Analyze Count →",
+
+    // Module 1: Count
+    card1Title: "02. Cell Count",
+    card1Hint: "Neubauer chamber with a depth of 0.1 mm",
     neubauerDetail: 'The calculations assume a standard Neubauer chamber with nine large quadrants of 1 mm² each. The four corner quadrants (marked "L" for leukocytes) are subdivided into 16 squares of 0.25 mm sides. The large central quadrant is also subdivided into 16 squares of 0.25 mm sides; each of these groups 16 mini-squares of 0.05 mm sides (area 0.0025 mm²). The five group squares in the central quadrant are used for counting platelets and erythrocytes.',
     lblLive: "Live",
     lblDead: "Dead",
@@ -93,7 +124,8 @@ const I18N = {
     resViability: "Viability",
     statusDefault: "Diagnostic",
 
-    card2Title: "Passage",
+    // Module 2: Passage
+    card2Title: "03. Passage",
     card2Hint: "C1V1 = C2V2 · inoculum calculation",
     lblCurrentC: 'Current Cell Density (x10⁶ <span class="mono">cell/mL</span>)',
     lblTargetV: 'Target Vol. (<span class="mono">mL</span>)',

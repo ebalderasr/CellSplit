@@ -2,33 +2,49 @@ const APP = {
   defaultLanguage: 'es',
   currentLanguage: 'es',
   deferredInstallPrompt: null,
-  currentModule: 'count',
+  currentModule: 'tally',
+  soundEnabled: true,
+  tally: {
+    live: 0,
+    dead: 0,
+  },
 };
 
 const DOM = {
-  // language
+  // Language
   langEs: document.getElementById('lang-es'),
   langEn: document.getElementById('lang-en'),
 
-  // navigation
+  // Navigation tiles
+  tileTally: document.getElementById('tile-tally'),
   tileCount: document.getElementById('tile-count'),
   tilePassage: document.getElementById('tile-passage'),
 
-  // top controls
+  // Top controls
   btnClear: document.getElementById('btn-clear'),
   btnInstall: document.getElementById('install-btn'),
   btnInfo: document.getElementById('btn-info'),
 
-  // sheet
+  // Sheet
   sheetBackdrop: document.getElementById('sheet-backdrop'),
   sheet: document.getElementById('info-sheet'),
   sheetClose: document.getElementById('sheet-close'),
 
-  // cards
-  cardCount: document.getElementById('card-count'),
-  cardPassage: document.getElementById('card-passage'),
+  // Module 0: Physical Tally Counter
+  cardTally: document.getElementById('card-tally'),
+  dispTotal: document.getElementById('disp-total'),
+  dispLive: document.getElementById('disp-live'),
+  dispDead: document.getElementById('disp-dead'),
+  btnTallyLive: document.getElementById('btn-tally-live'),
+  btnTallyDead: document.getElementById('btn-tally-dead'),
+  btnUndoLive: document.getElementById('btn-undo-live'),
+  btnUndoDead: document.getElementById('btn-undo-dead'),
+  btnTallyReset: document.getElementById('btn-tally-reset'),
+  btnToggleSound: document.getElementById('btn-toggle-sound'),
+  btnTallyNext: document.getElementById('btn-tally-next'),
 
-  // module 1 inputs
+  // Module 1: Count
+  cardCount: document.getElementById('card-count'),
   inpVivas: document.getElementById('inpVivas'),
   inpMuertas: document.getElementById('inpMuertas'),
   inpCuadrantes: document.getElementById('inpCuadrantes'),
@@ -38,26 +54,27 @@ const DOM = {
   btnNeubauerInfo: document.getElementById('btn-neubauer-info'),
   neubauerDetail: document.getElementById('neubauer-detail'),
 
-  // module 1 outputs
+  // Module 1 outputs
   boxResConteo: document.getElementById('boxResConteo'),
   outConc: document.getElementById('outConc'),
   outViability: document.getElementById('outViability'),
   outStatus: document.getElementById('outStatus'),
 
-  // module 2 inputs
+  // Module 2: Passage
+  cardPassage: document.getElementById('card-passage'),
   inpC1: document.getElementById('inpC1'),
   inpV2: document.getElementById('inpV2'),
   inpC2: document.getElementById('inpC2'),
   btnCalcPassage: document.getElementById('btn-calc-passage'),
 
-  // module 2 outputs
+  // Module 2 outputs
   boxResInoculo: document.getElementById('boxResInoculo'),
   outV1: document.getElementById('outV1'),
   outFreshMedium: document.getElementById('outFreshMedium'),
 };
 
 /* =========================
-   Utilities
+   Utilities & Sound Synthesis
    ========================= */
 
 function t(key) {
@@ -87,6 +104,11 @@ function formatFixed(value, decimals = 2) {
   return Number.isFinite(value) ? value.toFixed(decimals) : t('err');
 }
 
+function formatDigits(num, digits = 3) {
+  const safe = Math.max(0, Math.min(9999, Math.round(num || 0)));
+  return String(safe).padStart(digits, '0');
+}
+
 function showResultBox(box, { isError = false } = {}) {
   box.classList.add('visible');
   box.classList.toggle('error', isError);
@@ -97,7 +119,7 @@ function hideResultBox(box) {
 }
 
 function setCardValidity(cardElement, isValid) {
-  cardElement.classList.toggle('invalid', !isValid);
+  if (cardElement) cardElement.classList.toggle('invalid', !isValid);
 }
 
 function resetStatusBadge() {
@@ -124,26 +146,139 @@ function setStatusBadge(statusType) {
   DOM.outStatus.textContent = t('statOpt');
 }
 
+let audioCtx = null;
+
+function playTallySound(isDead = false) {
+  if (!APP.soundEnabled) return;
+  try {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (!AudioCtx) return;
+    if (!audioCtx) audioCtx = new AudioCtx();
+    if (audioCtx.state === 'suspended') {
+      audioCtx.resume();
+    }
+    const ctx = audioCtx;
+    const now = ctx.currentTime;
+
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    const filter = ctx.createBiquadFilter();
+
+    osc.type = isDead ? 'sawtooth' : 'triangle';
+    const startFreq = isDead ? 880 : 1250;
+    const endFreq   = isDead ? 280 : 450;
+
+    osc.frequency.setValueAtTime(startFreq, now);
+    osc.frequency.exponentialRampToValueAtTime(endFreq, now + 0.035);
+
+    filter.type = 'bandpass';
+    filter.frequency.setValueAtTime(isDead ? 950 : 1400, now);
+    filter.Q.setValueAtTime(4.0, now);
+
+    gain.gain.setValueAtTime(0.24, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.038);
+
+    osc.connect(filter);
+    filter.connect(gain);
+    gain.connect(ctx.destination);
+
+    osc.start(now);
+    osc.stop(now + 0.040);
+  } catch (_) {
+    // Audio may be restricted until gesture, safely ignore
+  }
+}
+
 /* =========================
-   Module UI
+   Module UI Navigation
    ========================= */
+
+const MODULES = ['tally', 'count', 'passage'];
+
 function showModule(moduleKey) {
+  if (!MODULES.includes(moduleKey)) return;
   APP.currentModule = moduleKey;
 
-  const isCount = moduleKey === 'count';
+  DOM.cardTally.classList.toggle('active', moduleKey === 'tally');
+  DOM.cardCount.classList.toggle('active', moduleKey === 'count');
+  DOM.cardPassage.classList.toggle('active', moduleKey === 'passage');
 
-  DOM.cardCount.classList.toggle('active', isCount);
-  DOM.cardPassage.classList.toggle('active', !isCount);
-
-  DOM.tileCount.classList.toggle('active', isCount);
-  DOM.tilePassage.classList.toggle('active', !isCount);
+  DOM.tileTally.classList.toggle('active', moduleKey === 'tally');
+  DOM.tileCount.classList.toggle('active', moduleKey === 'count');
+  DOM.tilePassage.classList.toggle('active', moduleKey === 'passage');
 
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 /* =========================
-   Info sheet
+   Module 0: Physical Tally Counter
    ========================= */
+
+function updateTallyDisplays() {
+  const live = APP.tally.live;
+  const dead = APP.tally.dead;
+  const total = live + dead;
+
+  if (DOM.dispLive) DOM.dispLive.textContent = formatDigits(live, 3);
+  if (DOM.dispDead) DOM.dispDead.textContent = formatDigits(dead, 3);
+  if (DOM.dispTotal) DOM.dispTotal.textContent = formatDigits(total, 3);
+
+  DOM.inpVivas.value = live > 0 ? String(live) : '';
+  DOM.inpMuertas.value = dead > 0 ? String(dead) : '';
+
+  autoCalculateCount();
+}
+
+function addLive() {
+  APP.tally.live += 1;
+  updateTallyDisplays();
+  playTallySound(false);
+  if ('vibrate' in navigator) {
+    try { navigator.vibrate(18); } catch (_) {}
+  }
+}
+
+function addDead() {
+  APP.tally.dead += 1;
+  updateTallyDisplays();
+  playTallySound(true);
+  if ('vibrate' in navigator) {
+    try { navigator.vibrate(24); } catch (_) {}
+  }
+}
+
+function undoLive() {
+  if (APP.tally.live > 0) {
+    APP.tally.live -= 1;
+    updateTallyDisplays();
+  }
+}
+
+function undoDead() {
+  if (APP.tally.dead > 0) {
+    APP.tally.dead -= 1;
+    updateTallyDisplays();
+  }
+}
+
+function resetTally() {
+  APP.tally.live = 0;
+  APP.tally.dead = 0;
+  updateTallyDisplays();
+  resetCountOutputs();
+  resetPassageOutputs();
+}
+
+function toggleSound() {
+  APP.soundEnabled = !APP.soundEnabled;
+  DOM.btnToggleSound.classList.toggle('active', APP.soundEnabled);
+  DOM.btnToggleSound.textContent = APP.soundEnabled ? '🔊' : '🔇';
+}
+
+/* =========================
+   Info Sheet
+   ========================= */
+
 function openSheet() {
   DOM.sheetBackdrop.classList.add('open');
   DOM.sheetBackdrop.setAttribute('aria-hidden', 'false');
@@ -205,9 +340,9 @@ function resetPicker(pickerId, defaultVal, customInput) {
 }
 
 function setupPickers() {
-  setupPicker({ pickerId: 'pickerCuadrantes', valueInputId: 'inpCuadrantes',  customInputId: 'inpCuadrantesCustom', onselect: autoCalculateCount   });
-  setupPicker({ pickerId: 'pickerDilucion',   valueInputId: 'inpDilucion',    customInputId: 'inpDilucion',         onselect: autoCalculateCount   });
-  setupPicker({ pickerId: 'pickerV2',          valueInputId: 'inpV2',          customInputId: 'inpV2',               onselect: autoCalculatePassage });
+  setupPicker({ pickerId: 'pickerCuadrantes', valueInputId: 'inpCuadrantes', customInputId: 'inpCuadrantesCustom', onselect: autoCalculateCount   });
+  setupPicker({ pickerId: 'pickerDilucion',   valueInputId: 'inpDilucion',   customInputId: 'inpDilucion',         onselect: autoCalculateCount   });
+  setupPicker({ pickerId: 'pickerV2',         valueInputId: 'inpV2',         customInputId: 'inpV2',               onselect: autoCalculatePassage });
 }
 
 /* =========================
@@ -235,6 +370,12 @@ function resetAllOutputs() {
 }
 
 function resetInputs() {
+  APP.tally.live = 0;
+  APP.tally.dead = 0;
+  if (DOM.dispLive) DOM.dispLive.textContent = '000';
+  if (DOM.dispDead) DOM.dispDead.textContent = '000';
+  if (DOM.dispTotal) DOM.dispTotal.textContent = '000';
+
   DOM.inpVivas.value   = '';
   DOM.inpMuertas.value = '';
 
@@ -256,7 +397,7 @@ function resetInputs() {
 function resetApp() {
   resetInputs();
   resetAllOutputs();
-  showModule('count');
+  showModule('tally');
 }
 
 /* =========================
@@ -325,26 +466,33 @@ function autoCalculateCount() {
   const liveStr = DOM.inpVivas.value.trim();
   const deadStr = DOM.inpMuertas.value.trim();
 
+  // Keep tally displays in sync if input changed manually
+  const liveInt = parseInteger(DOM.inpVivas) || 0;
+  const deadInt = parseInteger(DOM.inpMuertas) || 0;
+  APP.tally.live = liveInt;
+  APP.tally.dead = deadInt;
+  if (DOM.dispLive) DOM.dispLive.textContent = formatDigits(liveInt, 3);
+  if (DOM.dispDead) DOM.dispDead.textContent = formatDigits(deadInt, 3);
+  if (DOM.dispTotal) DOM.dispTotal.textContent = formatDigits(liveInt + deadInt, 3);
+
   // If both inputs are blank, keep outputs clean
   if (liveStr === '' && deadStr === '') {
     resetCountOutputs();
     return;
   }
 
-  const live = parseInteger(DOM.inpVivas);
-  const dead = parseInteger(DOM.inpMuertas);
   const squares = parseInteger(DOM.inpCuadrantes);
   const dilution = parseNumber(DOM.inpDilucion);
 
   const inputsValid =
-    isFiniteNonNegative(live) &&
-    isFiniteNonNegative(dead) &&
+    isFiniteNonNegative(liveInt) &&
+    isFiniteNonNegative(deadInt) &&
     isFinitePositive(squares) &&
     isFinitePositive(dilution);
 
   if (!inputsValid) return;
 
-  const total = live + dead;
+  const total = liveInt + deadInt;
   if (total <= 0) return;
 
   analyzeCount();
@@ -403,6 +551,7 @@ function autoCalculatePassage() {
 /* =========================
    Internationalization (i18n)
    ========================= */
+
 function applyTranslations(language) {
   const pack = I18N[language] || I18N[APP.defaultLanguage];
 
@@ -442,6 +591,7 @@ function loadSavedLanguage() {
 /* =========================
    PWA Install + Service Worker
    ========================= */
+
 function setupInstallPrompt() {
   window.addEventListener('beforeinstallprompt', (event) => {
     event.preventDefault();
@@ -469,6 +619,7 @@ function registerServiceWorker() {
 /* =========================
    iOS Install Banner
    ========================= */
+
 function setupiOSInstallBanner() {
   const isIOS       = /iphone|ipad|ipod/i.test(navigator.userAgent);
   const isStandalone = navigator.standalone === true;
@@ -488,15 +639,25 @@ function setupiOSInstallBanner() {
 /* =========================
    Event Binding
    ========================= */
+
 function bindEvents() {
   // Language toggles
   DOM.langEs.addEventListener('click', () => setLanguage('es'));
   DOM.langEn.addEventListener('click', () => setLanguage('en'));
 
-  // Module switch (tiles only)
-  [DOM.tileCount, DOM.tilePassage].filter(Boolean).forEach((btn) => {
+  // Module switch via tiles
+  [DOM.tileTally, DOM.tileCount, DOM.tilePassage].filter(Boolean).forEach((btn) => {
     btn.addEventListener('click', () => showModule(btn.dataset.module));
   });
+
+  // Module 0 Tally clickers & controls
+  DOM.btnTallyLive?.addEventListener('click', addLive);
+  DOM.btnTallyDead?.addEventListener('click', addDead);
+  DOM.btnUndoLive?.addEventListener('click', undoLive);
+  DOM.btnUndoDead?.addEventListener('click', undoDead);
+  DOM.btnTallyReset?.addEventListener('click', resetTally);
+  DOM.btnToggleSound?.addEventListener('click', toggleSound);
+  DOM.btnTallyNext?.addEventListener('click', () => showModule('count'));
 
   // Actions
   DOM.btnClear.addEventListener('click', resetApp);
@@ -532,11 +693,33 @@ function bindEvents() {
   [DOM.inpC1, DOM.inpV2, DOM.inpC2].forEach((field) => {
     field.addEventListener('input', autoCalculatePassage);
   });
+
+  // Keyboard counting shortcuts when on tally screen
+  window.addEventListener('keydown', (e) => {
+    if (['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement?.tagName)) return;
+
+    if (APP.currentModule === 'tally') {
+      if (e.key === 'v' || e.key === 'V' || e.key === 'l' || e.key === 'L' || e.key === '1' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        addLive();
+      } else if (e.key === 'm' || e.key === 'M' || e.key === 'd' || e.key === 'D' || e.key === '2' || e.key === 'ArrowDown') {
+        e.preventDefault();
+        addDead();
+      } else if (e.key === 'z' || e.key === 'Z' || e.key === 'Backspace') {
+        e.preventDefault();
+        undoLive();
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        showModule('count');
+      }
+    }
+  });
 }
 
 /* =========================
    Touch Swipe Navigation (with boundaries / topes)
    ========================= */
+
 function triggerTopeBounce(element, direction) {
   if (!element) return;
   const cls = direction === 'left' ? 'tope-bounce-left' : 'tope-bounce-right';
@@ -574,20 +757,28 @@ function setupSwipeNavigation() {
     if (deltaTime > 800) return;
     if (absX < 45 || absX <= absY * 1.35) return;
 
-    if (APP.currentModule === 'count') {
+    if (APP.currentModule === 'tally') {
       if (deltaX < -45) {
-        // Swipe left -> advance to Module 2 (Passage)
+        // Swipe left -> advance to Module 2 (Count)
+        showModule('count');
+      } else if (deltaX > 45) {
+        // Swipe right -> TOPE (already on leftmost module)
+        triggerTopeBounce(DOM.cardTally, 'left');
+      }
+    } else if (APP.currentModule === 'count') {
+      if (deltaX < -45) {
+        // Swipe left -> advance to Module 3 (Passage)
         showModule('passage');
       } else if (deltaX > 45) {
-        // Swipe right -> TOPE (already on Module 1)
-        triggerTopeBounce(DOM.cardCount, 'left');
+        // Swipe right -> return to Module 1 (Tally)
+        showModule('tally');
       }
     } else if (APP.currentModule === 'passage') {
       if (deltaX > 45) {
-        // Swipe right -> return to Module 1 (Count)
+        // Swipe right -> return to Module 2 (Count)
         showModule('count');
       } else if (deltaX < -45) {
-        // Swipe left -> TOPE (already on Module 2)
+        // Swipe left -> TOPE (already on rightmost module)
         triggerTopeBounce(DOM.cardPassage, 'right');
       }
     }
@@ -597,6 +788,7 @@ function setupSwipeNavigation() {
 /* =========================
    App Init
    ========================= */
+
 function init() {
   loadSavedLanguage();
   applyTranslations(APP.currentLanguage);
@@ -607,8 +799,7 @@ function init() {
   setupInstallPrompt();
   setupiOSInstallBanner();
   registerServiceWorker();
-  showModule('count');
+  showModule('tally');
 }
 
 init();
-

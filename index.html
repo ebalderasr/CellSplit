@@ -74,29 +74,92 @@
 
     <!-- Module tiles -->
     <div class="tiles" aria-label="Modules overview">
-      <button class="tile active" type="button" id="tile-count" data-module="count" aria-label="Conteo">
-        <div class="tile-badge mono" data-i18n="tile1N">01</div>
+      <button class="tile active" type="button" id="tile-tally" data-module="tally" aria-label="Contador">
+        <div class="tile-badge mono" data-i18n="tile0N">01</div>
         <div style="min-width:0;">
-          <p class="tile-title" data-i18n="tile1T">Conteo de células</p>
-          <p class="tile-sub">Neubauer · viable conc</p>
+          <p class="tile-title" data-i18n="tile0T">Contador</p>
+          <p class="tile-sub" data-i18n="tile0S">Vivas y muertas</p>
+        </div>
+      </button>
+
+      <button class="tile" type="button" id="tile-count" data-module="count" aria-label="Conteo">
+        <div class="tile-badge mono" data-i18n="tile1N">02</div>
+        <div style="min-width:0;">
+          <p class="tile-title" data-i18n="tile1T">Conteo</p>
+          <p class="tile-sub" data-i18n="tile1S">Viabilidad · conc</p>
         </div>
       </button>
 
       <button class="tile" type="button" id="tile-passage" data-module="passage" aria-label="Pase">
-        <div class="tile-badge mono" data-i18n="tile2N">02</div>
+        <div class="tile-badge mono" data-i18n="tile2N">03</div>
         <div style="min-width:0;">
-          <p class="tile-title" data-i18n="tile2T">Pase / Inóculo</p>
-          <p class="tile-sub">C1V1 = C2V2</p>
+          <p class="tile-title" data-i18n="tile2T">Pase</p>
+          <p class="tile-sub" data-i18n="tile2S">Inóculo · C1V1</p>
         </div>
       </button>
     </div>
 
     <main>
-      <!-- PANEL: Count -->
-      <section class="panel active card" id="card-count" role="region" aria-label="Conteo">
+      <!-- PANEL: Physical Cell Tally Counter -->
+      <section class="panel active card chassis-card" id="card-tally" role="region" aria-label="Contador">
         <div class="card-header">
           <div>
-            <h2 class="card-h" data-i18n="card1Title">01. Conteo de células</h2>
+            <h2 class="card-h" data-i18n="card0Title">01. Contador de células</h2>
+            <p class="card-desc" data-i18n="card0Hint">Instrumento de laboratorio con respuesta sonora mecánica</p>
+          </div>
+          <div class="chassis-header-actions">
+            <button type="button" class="btn-sound-toggle active" id="btn-toggle-sound" title="Sonido" aria-label="Activar o silenciar sonido">🔊</button>
+            <button type="button" class="btn-counter-zero" id="btn-tally-reset" data-i18n="btnResetZero">⟲ En 0</button>
+          </div>
+        </div>
+
+        <div class="apparatus-chassis">
+          <!-- Total readout display -->
+          <div class="apparatus-total-bar">
+            <span class="apparatus-total-label" data-i18n="lblTotalCount">TOTAL</span>
+            <div class="apparatus-total-display mono" id="disp-total">000</div>
+          </div>
+
+          <!-- Dual Button Deck -->
+          <div class="apparatus-deck">
+            <!-- Column 1: Live Cells -->
+            <div class="apparatus-col live-col">
+              <div class="apparatus-display-box">
+                <span class="apparatus-label live" data-i18n="lblLive">VIVAS</span>
+                <div class="apparatus-counter mono" id="disp-live">000</div>
+              </div>
+              <button type="button" class="apparatus-btn btn-live" id="btn-tally-live" aria-label="Contar viva (+1)">
+                <span class="apparatus-btn-icon">🟢</span>
+                <span class="apparatus-btn-text" data-i18n="tallyLiveBtn">+1 VIVA</span>
+              </button>
+              <button type="button" class="btn-tally-undo" id="btn-undo-live" title="Deshacer 1" aria-label="Restar 1 viva">−1</button>
+            </div>
+
+            <!-- Column 2: Dead Cells -->
+            <div class="apparatus-col dead-col">
+              <div class="apparatus-display-box">
+                <span class="apparatus-label dead" data-i18n="lblDead">MUERTAS</span>
+                <div class="apparatus-counter mono" id="disp-dead">000</div>
+              </div>
+              <button type="button" class="apparatus-btn btn-dead" id="btn-tally-dead" aria-label="Contar muerta (+1)">
+                <span class="apparatus-btn-icon">🔴</span>
+                <span class="apparatus-btn-text" data-i18n="tallyDeadBtn">+1 MUERTA</span>
+              </button>
+              <button type="button" class="btn-tally-undo" id="btn-undo-dead" title="Deshacer 1" aria-label="Restar 1 muerta">−1</button>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn btn-primary btn-block" id="btn-tally-next" type="button" style="margin-top:16px;" data-i18n="btnTallyNext">
+          Analizar Conteo →
+        </button>
+      </section>
+
+      <!-- PANEL: Count -->
+      <section class="panel card" id="card-count" role="region" aria-label="Conteo">
+        <div class="card-header">
+          <div>
+            <h2 class="card-h" data-i18n="card1Title">02. Conteo de células</h2>
             <p class="card-desc">
               <span data-i18n="card1Hint">Neubauer 0.1 mm · concentración viable (x10⁶ <span class="mono">cell/mL</span>)</span>
               <button class="info-btn" id="btn-neubauer-info" type="button" aria-label="Neubauer chamber info" aria-expanded="false">
@@ -184,7 +247,7 @@
       <section class="panel card" id="card-passage" role="region" aria-label="Pase">
         <div class="card-header">
           <div>
-            <h2 class="card-h" data-i18n="card2Title">02. Pase</h2>
+            <h2 class="card-h" data-i18n="card2Title">03. Pase</h2>
             <p class="card-desc" data-i18n="card2Hint">C1V1 = C2V2 · cálculo de inóculo</p>
           </div>
           <div>
