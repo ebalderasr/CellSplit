@@ -320,8 +320,9 @@ function analyzeCount() {
   else if (total > maxTotal)  setStatusBadge('high');
   else                        setStatusBadge('ok');
 
-  // Auto-transfer concentration to module 2
+  // Auto-transfer concentration to module 2 and recalculate passage
   DOM.inpC1.value = viableConc.toFixed(2);
+  calculatePassage();
 
   showResultBox(DOM.boxResConteo, { isError: false });
 }
@@ -504,6 +505,47 @@ function bindEvents() {
 }
 
 /* =========================
+   Touch Swipe Navigation
+   ========================= */
+function setupSwipeNavigation() {
+  let startX = 0;
+  let startY = 0;
+  let startTime = 0;
+
+  document.addEventListener('touchstart', (e) => {
+    if (e.touches.length !== 1) return;
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+    startTime = Date.now();
+  }, { passive: true });
+
+  document.addEventListener('touchend', (e) => {
+    if (e.changedTouches.length !== 1) return;
+    if (DOM.sheetBackdrop && DOM.sheetBackdrop.classList.contains('open')) return;
+
+    const endX = e.changedTouches[0].clientX;
+    const endY = e.changedTouches[0].clientY;
+    const deltaX = endX - startX;
+    const deltaY = endY - startY;
+    const deltaTime = Date.now() - startTime;
+
+    const absX = Math.abs(deltaX);
+    const absY = Math.abs(deltaY);
+
+    // Require horizontal swipe: >= 45px distance, predominantly horizontal, within 800ms
+    if (deltaTime > 800) return;
+    if (absX < 45 || absX <= absY * 1.35) return;
+
+    // Switch between Module 1 (count) and Module 2 (passage)
+    if (APP.currentModule === 'count') {
+      showModule('passage');
+    } else {
+      showModule('count');
+    }
+  }, { passive: true });
+}
+
+/* =========================
    App Init
    ========================= */
 function init() {
@@ -512,6 +554,7 @@ function init() {
   resetAllOutputs();
   setupPickers();
   bindEvents();
+  setupSwipeNavigation();
   setupInstallPrompt();
   setupiOSInstallBanner();
   registerServiceWorker();
@@ -519,3 +562,4 @@ function init() {
 }
 
 init();
+
